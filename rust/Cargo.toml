@@ -1,0 +1,22 @@
+[package]
+name = "zxyphor-rust"
+version = "1.0.0"
+edition = "2021"
+authors = ["Zxyphor Kernel Team"]
+description = "Rust components for the Zxyphor kernel — cryptography, filesystems, memory management, networking, FFI bridge"
+
+[lib]
+name = "zxyphor_rust"
+crate-type = ["staticlib"]
+
+[dependencies]
+
+[profile.release]
+opt-level = 2
+lto = true
+panic = "abort"
+codegen-units = 1
+strip = "symbols"
+
+[profile.dev]
+panic = "abort"
