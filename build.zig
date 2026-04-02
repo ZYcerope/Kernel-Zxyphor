@@ -1,9 +1,12 @@
 // =============================================================================
-// Kernel Zxyphor v0.0.2 "Xceon" — Build System
+// Kernel Zxyphor v0.0.3 "Xceon II" — Build System
 // =============================================================================
 // Advanced build configuration for the Zxyphor kernel targeting x86_64.
 // Zig 0.15.2 module-based build API. Supports freestanding compilation
 // and optional Rust FFI integration via static library linkage.
+//
+// Features: KPTI, KASLR, 5-level paging, x2APIC, EEVDF, io_uring, eBPF,
+//           Landlock, seccomp-BPF, cgroup v2, RCU, SLUB, NVMe, virtio
 // =============================================================================
 
 const std = @import("std");
