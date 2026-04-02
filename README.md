@@ -1,6 +1,6 @@
 # Zxyphor Kernel
 
-**Codename: Genesis** — A modern, x86_64 operating system kernel written in Zig and Rust.
+**Codename: Xceon** — A modern, x86_64 operating system kernel written in Zig and Rust.
 
 ```
  ███████╗██╗  ██╗██╗   ██╗██████╗ ██╗  ██╗ ██████╗ ██████╗
@@ -9,7 +9,7 @@
   ███╔╝   ██╔██╗   ╚██╔╝  ██╔═══╝ ██╔══██║██║   ██║██╔══██╗
  ███████╗██╔╝ ██╗   ██║   ██║     ██║  ██║╚██████╔╝██║  ██║
  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
-                    v1.0.0 Genesis
+                    v0.0.2 Xceon
 ```
 
 ## Overview
@@ -283,7 +283,7 @@ All Rust modules expose `#[no_mangle] extern "C"` FFI functions callable from Zi
 
 ### Prerequisites
 
-- **Zig** ≥ 0.13.0 (provides the kernel build system)
+- **Zig** ≥ 0.15.2 (provides the kernel build system)
 - **Rust** with `nightly` toolchain + `x86_64-unknown-none` target (for crypto/fs modules)
 - **QEMU** (for testing in a virtual machine)
 - **GRUB** + `xorriso` (for creating bootable ISO images)
@@ -324,7 +324,7 @@ cat > iso/boot/grub/grub.cfg << 'EOF'
 set timeout=3
 set default=0
 
-menuentry "Zxyphor Kernel v1.0.0" {
+menuentry "Zxyphor Kernel v0.0.2 Xceon" {
     multiboot2 /boot/zxyphor
     boot
 }

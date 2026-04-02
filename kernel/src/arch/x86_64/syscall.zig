@@ -350,7 +350,6 @@ pub const SyscallNumber = enum(u64) {
 /// RDI = arg1, RSI = arg2, RDX = arg3
 /// R10 = arg4, R8 = arg5, R9 = arg6
 /// Return value in RAX
-
 /// Syscall context passed to handlers
 pub const SyscallContext = struct {
     number: u64,
@@ -511,7 +510,7 @@ pub fn syscallEntry() callconv(.Naked) void {
     // RCX = user RIP, R11 = user RFLAGS
     // RSP is still user RSP, need to swap to kernel stack
     asm volatile (
-        // Save user RSP and load kernel RSP
+    // Save user RSP and load kernel RSP
         \\swapgs
         \\mov %%rsp, %%gs:0x10  // Save user RSP to per-cpu area
         \\mov %%gs:0x08, %%rsp  // Load kernel RSP from per-cpu area

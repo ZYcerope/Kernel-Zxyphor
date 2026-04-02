@@ -11,11 +11,11 @@ const std = @import("std");
 
 pub const SegmentAccess = packed struct(u8) {
     accessed: bool,
-    read_write: bool,       // Readable (code) / Writable (data)
+    read_write: bool, // Readable (code) / Writable (data)
     direction_conforming: bool,
     executable: bool,
-    descriptor_type: bool,  // 0=system, 1=code/data
-    dpl: u2,                // Descriptor Privilege Level
+    descriptor_type: bool, // 0=system, 1=code/data
+    dpl: u2, // Descriptor Privilege Level
     present: bool,
 };
 
@@ -31,9 +31,9 @@ pub const SegmentDescriptor = packed struct(u64) {
 
 pub const SegmentFlags = packed struct(u4) {
     _reserved: u1,
-    long_mode: bool,        // L bit - 64-bit code segment
-    size: bool,             // D/B bit
-    granularity: bool,      // G bit
+    long_mode: bool, // L bit - 64-bit code segment
+    size: bool, // D/B bit
+    granularity: bool, // G bit
 };
 
 pub const SystemSegmentDescriptor64 = packed struct(u128) {
@@ -95,20 +95,20 @@ pub const GdtRegister = packed struct {
 
 pub const Tss64 = packed struct {
     _reserved0: u32,
-    rsp0: u64,              // Ring 0 stack pointer
-    rsp1: u64,              // Ring 1 stack pointer
-    rsp2: u64,              // Ring 2 stack pointer
+    rsp0: u64, // Ring 0 stack pointer
+    rsp1: u64, // Ring 1 stack pointer
+    rsp2: u64, // Ring 2 stack pointer
     _reserved1: u64,
-    ist1: u64,              // Interrupt Stack Table 1
-    ist2: u64,              // IST 2
-    ist3: u64,              // IST 3
-    ist4: u64,              // IST 4
-    ist5: u64,              // IST 5
-    ist6: u64,              // IST 6
-    ist7: u64,              // IST 7
+    ist1: u64, // Interrupt Stack Table 1
+    ist2: u64, // IST 2
+    ist3: u64, // IST 3
+    ist4: u64, // IST 4
+    ist5: u64, // IST 5
+    ist6: u64, // IST 6
+    ist7: u64, // IST 7
     _reserved2: u64,
     _reserved3: u16,
-    io_map_base: u16,       // I/O Map Base Address
+    io_map_base: u16, // I/O Map Base Address
 };
 
 pub const IstUsage = enum(u3) {
@@ -342,12 +342,12 @@ pub const MiscEnable = packed struct(u64) {
 };
 
 pub const ArchCapabilities = packed struct(u64) {
-    rdcl_no: bool,             // Not affected by Meltdown
-    ibrs_all: bool,            // IBRS full
-    rsba: bool,                // RSB Alternate
+    rdcl_no: bool, // Not affected by Meltdown
+    ibrs_all: bool, // IBRS full
+    rsba: bool, // RSB Alternate
     skip_l1dfl_vmentry: bool,
-    ssb_no: bool,              // Not affected by Spectre v4
-    mds_no: bool,              // Not affected by MDS
+    ssb_no: bool, // Not affected by Spectre v4
+    mds_no: bool, // Not affected by MDS
     if_pschange_mc_no: bool,
     tsx_ctrl: bool,
     taa_no: bool,
@@ -386,73 +386,73 @@ pub const SpecCtrl = packed struct(u64) {
 // ============================================================================
 
 pub const Cr0 = packed struct(u64) {
-    pe: bool,       // Protection Enable
-    mp: bool,       // Monitor Coprocessor
-    em: bool,       // Emulation
-    ts: bool,       // Task Switched
-    et: bool,       // Extension Type
-    ne: bool,       // Numeric Error
+    pe: bool, // Protection Enable
+    mp: bool, // Monitor Coprocessor
+    em: bool, // Emulation
+    ts: bool, // Task Switched
+    et: bool, // Extension Type
+    ne: bool, // Numeric Error
     _r1: u10,
-    wp: bool,       // Write Protect
+    wp: bool, // Write Protect
     _r2: u1,
-    am: bool,       // Alignment Mask
+    am: bool, // Alignment Mask
     _r3: u10,
-    nw: bool,       // Not Write-through
-    cd: bool,       // Cache Disable
-    pg: bool,       // Paging
+    nw: bool, // Not Write-through
+    cd: bool, // Cache Disable
+    pg: bool, // Paging
     _r4: u32,
 };
 
 pub const Cr4 = packed struct(u64) {
-    vme: bool,       // Virtual-8086 Mode
-    pvi: bool,       // Protected-mode Virtual Interrupts
-    tsd: bool,       // Time Stamp Disable
-    de: bool,        // Debugging Extensions
-    pse: bool,       // Page Size Extensions
-    pae: bool,       // Physical Address Extension
-    mce: bool,       // Machine-Check Enable
-    pge: bool,       // Page Global Enable
-    pce: bool,       // Performance Counter Enable
-    osfxsr: bool,    // FXSAVE/FXRSTOR
+    vme: bool, // Virtual-8086 Mode
+    pvi: bool, // Protected-mode Virtual Interrupts
+    tsd: bool, // Time Stamp Disable
+    de: bool, // Debugging Extensions
+    pse: bool, // Page Size Extensions
+    pae: bool, // Physical Address Extension
+    mce: bool, // Machine-Check Enable
+    pge: bool, // Page Global Enable
+    pce: bool, // Performance Counter Enable
+    osfxsr: bool, // FXSAVE/FXRSTOR
     osxmmexcpt: bool, // Unmasked SIMD FP Exceptions
-    umip: bool,      // User-Mode Instruction Prevention
-    la57: bool,      // 5-Level Paging
-    vmxe: bool,      // VMX Enable
-    smxe: bool,      // SMX Enable
+    umip: bool, // User-Mode Instruction Prevention
+    la57: bool, // 5-Level Paging
+    vmxe: bool, // VMX Enable
+    smxe: bool, // SMX Enable
     _r1: u1,
-    fsgsbase: bool,  // FSGSBASE
-    pcide: bool,     // PCID Enable
-    osxsave: bool,   // XSAVE Enable
+    fsgsbase: bool, // FSGSBASE
+    pcide: bool, // PCID Enable
+    osxsave: bool, // XSAVE Enable
     _r2: u1,
-    smep: bool,      // Supervisor Mode Exec Prevention
-    smap: bool,      // Supervisor Mode Access Prevention
-    pke: bool,       // Protection Keys Enable
-    cet: bool,       // Control-flow Enforcement
-    pks: bool,       // Protection Keys for Supervisor
-    uintr: bool,     // User Interrupts Enable
+    smep: bool, // Supervisor Mode Exec Prevention
+    smap: bool, // Supervisor Mode Access Prevention
+    pke: bool, // Protection Keys Enable
+    cet: bool, // Control-flow Enforcement
+    pks: bool, // Protection Keys for Supervisor
+    uintr: bool, // User Interrupts Enable
     _reserved: u38,
 };
 
 pub const Cr3 = packed struct(u64) {
     _r1: u3,
-    pwt: bool,       // Page-level Write-Through
-    pcd: bool,       // Page-level Cache Disable
+    pwt: bool, // Page-level Write-Through
+    pcd: bool, // Page-level Cache Disable
     _r2: u7,
-    pml4_base: u40,  // Physical address of PML4 (page-aligned)
+    pml4_base: u40, // Physical address of PML4 (page-aligned)
     _r3: u12,
 };
 
 pub const Efer = packed struct(u64) {
-    sce: bool,        // SYSCALL Enable
+    sce: bool, // SYSCALL Enable
     _r1: u7,
-    lme: bool,        // Long Mode Enable
+    lme: bool, // Long Mode Enable
     _r2: u1,
-    lma: bool,        // Long Mode Active
-    nxe: bool,        // No-Execute Enable
-    svme: bool,       // Secure Virtual Machine Enable
-    lmsle: bool,      // Long Mode Segment Limit Enable
-    ffxsr: bool,      // Fast FXSAVE/FXRSTOR
-    tce: bool,        // Translation Cache Extension
+    lma: bool, // Long Mode Active
+    nxe: bool, // No-Execute Enable
+    svme: bool, // Secure Virtual Machine Enable
+    lmsle: bool, // Long Mode Segment Limit Enable
+    ffxsr: bool, // Fast FXSAVE/FXRSTOR
+    tce: bool, // Translation Cache Extension
     _reserved: u48,
 };
 
@@ -468,12 +468,12 @@ pub const UserDesc = struct {
     base_addr: u32,
     limit: u32,
     seg_32bit: bool,
-    contents: u2,       // 0=data, 1=stack, 2=code, 3=code conforming
+    contents: u2, // 0=data, 1=stack, 2=code, 3=code conforming
     read_exec_only: bool,
     limit_in_pages: bool,
     seg_not_present: bool,
     useable: bool,
-    lm: bool,           // 64-bit code segment
+    lm: bool, // 64-bit code segment
 };
 
 // ============================================================================

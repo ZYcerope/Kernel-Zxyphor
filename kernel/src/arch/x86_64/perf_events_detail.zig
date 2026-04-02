@@ -53,7 +53,7 @@ pub const PerfHwCacheId = enum(u64) {
     LL = 2,
     DTLB = 3,
     ITLB = 4,
-    BPU = 5,   // Branch Prediction Unit
+    BPU = 5, // Branch Prediction Unit
     NODE = 6,
 };
 
@@ -343,9 +343,9 @@ pub const PebsRecord = struct {
     r14: u64,
     r15: u64,
     status: u64,
-    dla: u64,          // Data Linear Address
-    dse: u64,          // Data Source Encoding
-    lat: u64,          // Latency value
+    dla: u64, // Data Linear Address
+    dse: u64, // Data Source Encoding
+    lat: u64, // Latency value
     eventing_ip: u64,
     tsc: u64,
     applicable_counters: u64,
@@ -387,13 +387,13 @@ pub const IntelPtCap = packed struct(u64) {
 
 pub const IntelPtConfig = struct {
     enabled: bool,
-    branch: bool,          // Branch trace
-    tsc: bool,             // Timestamp
-    no_retcomp: bool,      // No return compression
+    branch: bool, // Branch trace
+    tsc: bool, // Timestamp
+    no_retcomp: bool, // No return compression
     call_stack: bool,
-    mtc: bool,             // Mini Timestamp Counter
-    cyc: bool,             // Cycle-Accurate Mode
-    ptw: bool,             // PTWRITE
+    mtc: bool, // Mini Timestamp Counter
+    cyc: bool, // Cycle-Accurate Mode
+    ptw: bool, // PTWRITE
     fup_on_ptw: bool,
     pwr_evt: bool,
     cr3_filter: u64,
@@ -412,29 +412,29 @@ pub const IntelPtAddrRange = struct {
 
 pub const IntelPtPacketType = enum(u8) {
     Padding = 0,
-    Psb = 1,       // Packet Stream Boundary
+    Psb = 1, // Packet Stream Boundary
     PsbEnd = 2,
-    Cbr = 3,       // Core Bus Ratio
-    Tnt = 4,       // Taken/Not-Taken
-    Tip = 5,       // Target IP
-    TipPge = 6,    // Target IP - PGE
-    TipPgd = 7,    // Target IP - PGD
-    Fup = 8,       // Flow Update
+    Cbr = 3, // Core Bus Ratio
+    Tnt = 4, // Taken/Not-Taken
+    Tip = 5, // Target IP
+    TipPge = 6, // Target IP - PGE
+    TipPgd = 7, // Target IP - PGD
+    Fup = 8, // Flow Update
     Mode = 9,
     Tsc = 10,
-    Mtc = 11,      // Mini Timestamp Counter
+    Mtc = 11, // Mini Timestamp Counter
     Cyc = 12,
-    Ovf = 13,      // Overflow
-    Ptw = 14,      // PTWRITE
+    Ovf = 13, // Overflow
+    Ptw = 14, // PTWRITE
     Exstop = 15,
     Mwait = 16,
-    Pwre = 17,     // Power Entry
-    Pwrx = 18,     // Power Exit
-    Bbp = 19,      // Block Begin
-    Bip = 20,      // Block Item
-    Bep = 21,      // Block End
-    Cfe = 22,      // Control Flow Event
-    Evd = 23,      // Event Data
+    Pwre = 17, // Power Entry
+    Pwrx = 18, // Power Exit
+    Bbp = 19, // Block Begin
+    Bip = 20, // Block Item
+    Bep = 21, // Block End
+    Cfe = 22, // Control Flow Event
+    Evd = 23, // Event Data
 };
 
 // ============================================================================
@@ -494,17 +494,17 @@ pub const PmuEventEntry = struct {
 // ============================================================================
 
 pub const UncorePmuType = enum(u8) {
-    Cbox = 0,      // Core-accessible home agent
-    Arb = 1,       // Arbitration
-    Cha = 2,       // Caching/Home Agent
-    Imc = 3,       // Integrated Memory Controller
-    M2m = 4,       // Mesh to Memory
-    M3upi = 5,     // Mesh to UPI
-    Upi = 6,       // Ultra Path Interconnect
-    Iio = 7,       // Integrated IO
-    Irp = 8,       // IIO Ring Port
-    Pcu = 9,       // Power Control Unit
-    Mdf = 10,      // Mesh to Die Filter
+    Cbox = 0, // Core-accessible home agent
+    Arb = 1, // Arbitration
+    Cha = 2, // Caching/Home Agent
+    Imc = 3, // Integrated Memory Controller
+    M2m = 4, // Mesh to Memory
+    M3upi = 5, // Mesh to UPI
+    Upi = 6, // Ultra Path Interconnect
+    Iio = 7, // Integrated IO
+    Irp = 8, // IIO Ring Port
+    Pcu = 9, // Power Control Unit
+    Mdf = 10, // Mesh to Die Filter
 };
 
 pub const UncorePmuOps = struct {
@@ -546,7 +546,7 @@ pub const PerfEventState = enum(i8) {
 // ============================================================================
 
 pub const PerfCgroupInfo = struct {
-    css: ?*anyopaque,    // cgroup_subsys_state
+    css: ?*anyopaque, // cgroup_subsys_state
     timestamp: u64,
     info: u32,
 };

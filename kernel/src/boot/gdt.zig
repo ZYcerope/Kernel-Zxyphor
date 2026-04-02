@@ -207,7 +207,7 @@ fn loadGdt() void {
     asm volatile ("lgdt (%[gdt_ptr])"
         :
         : [gdt_ptr] "r" (&gdt_pointer),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -228,10 +228,7 @@ fn reloadSegments() void {
         \\ movw %%ax, %%fs
         \\ movw %%ax, %%gs
         \\ movw %%ax, %%ss
-        :
-        :
-        : "rax", "memory"
-    );
+        ::: .{ .rax = true, .memory = true });
 }
 
 /// Load the Task Register with the TSS selector

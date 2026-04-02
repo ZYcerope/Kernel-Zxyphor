@@ -273,7 +273,7 @@ pub fn switchContext(old_ctx: *u64, new_ctx: u64) void {
         :
         : [old_ctx] "r" (old_ctx),
           [new_ctx] "r" (new_ctx),
-        : "memory", "cc"
+        : .{ .memory = true, .cc = true }
     );
     unreachable;
 }
@@ -518,7 +518,7 @@ fn writeCr3(value: u64) void {
     asm volatile ("movq %[value], %%cr3"
         :
         : [value] "r" (value),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -557,8 +557,8 @@ pub const SIGNAL_TRAMPOLINE_SIZE = SIGNAL_TRAMPOLINE.len;
 pub fn commonInterruptEntry() callconv(.Naked) void {
     asm volatile (
     // At this point the stack has: SS, RSP, RFLAGS, CS, RIP, error_code
-        // The individual vector stubs have already pushed error_code
-        // Save all general-purpose registers
+    // The individual vector stubs have already pushed error_code
+    // Save all general-purpose registers
         \\  pushq %%rbp
         \\  pushq %%rax
         \\  pushq %%rbx

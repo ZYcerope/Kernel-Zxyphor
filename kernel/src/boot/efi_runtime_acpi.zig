@@ -14,17 +14,17 @@ pub const EFI_2_100_SYSTEM_TABLE_REVISION: u32 = (2 << 16) | 100;
 
 pub const EfiSystemTable = extern struct {
     hdr: EfiTableHeader,
-    firmware_vendor: u64,     // CHAR16 *
+    firmware_vendor: u64, // CHAR16 *
     firmware_revision: u32,
     _pad: u32,
     con_in_handle: u64,
-    con_in: u64,              // EFI_SIMPLE_TEXT_INPUT_PROTOCOL *
+    con_in: u64, // EFI_SIMPLE_TEXT_INPUT_PROTOCOL *
     con_out_handle: u64,
-    con_out: u64,             // EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *
+    con_out: u64, // EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *
     stderr_handle: u64,
-    stderr_proto: u64,        // EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *
-    runtime_services: u64,    // EFI_RUNTIME_SERVICES *
-    boot_services: u64,       // EFI_BOOT_SERVICES *
+    stderr_proto: u64, // EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *
+    runtime_services: u64, // EFI_RUNTIME_SERVICES *
+    boot_services: u64, // EFI_BOOT_SERVICES *
     number_of_table_entries: u64,
     configuration_table: u64, // EFI_CONFIGURATION_TABLE *
 };
@@ -180,7 +180,7 @@ pub const EFI_IMAGE_SECURITY_DATABASE_GUID: EfiGuid = .{
 // ============================================================================
 
 pub const GptHeader = extern struct {
-    signature: u64,            // "EFI PART" = 0x5452415020494645
+    signature: u64, // "EFI PART" = 0x5452415020494645
     revision: u32,
     header_size: u32,
     header_crc32: u32,
@@ -210,24 +210,32 @@ pub const GptEntry = extern struct {
     starting_lba: u64,
     ending_lba: u64,
     attributes: u64,
-    partition_name: [72]u8,   // UTF-16LE, 36 chars
+    partition_name: [72]u8, // UTF-16LE, 36 chars
 };
 
 // Well-known partition type GUIDs
 pub const GPT_ENTRY_TYPE_EFI_SYSTEM: EfiGuid = .{
-    .data1 = 0xC12A7328, .data2 = 0xF81F, .data3 = 0x11D2,
+    .data1 = 0xC12A7328,
+    .data2 = 0xF81F,
+    .data3 = 0x11D2,
     .data4 = .{ 0xBA, 0x4B, 0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B },
 };
 pub const GPT_ENTRY_TYPE_LINUX_FS: EfiGuid = .{
-    .data1 = 0x0FC63DAF, .data2 = 0x8483, .data3 = 0x4772,
+    .data1 = 0x0FC63DAF,
+    .data2 = 0x8483,
+    .data3 = 0x4772,
     .data4 = .{ 0x8E, 0x79, 0x3D, 0x69, 0xD8, 0x47, 0x7D, 0xE4 },
 };
 pub const GPT_ENTRY_TYPE_LINUX_SWAP: EfiGuid = .{
-    .data1 = 0x0657FD6D, .data2 = 0xA4AB, .data3 = 0x43C4,
+    .data1 = 0x0657FD6D,
+    .data2 = 0xA4AB,
+    .data3 = 0x43C4,
     .data4 = .{ 0x84, 0xE5, 0x09, 0x33, 0xC8, 0x4B, 0x4F, 0x4F },
 };
 pub const GPT_ENTRY_TYPE_LINUX_LVM: EfiGuid = .{
-    .data1 = 0xE6D6D379, .data2 = 0xF507, .data3 = 0x44C2,
+    .data1 = 0xE6D6D379,
+    .data2 = 0xF507,
+    .data3 = 0x44C2,
     .data4 = .{ 0xA2, 0x3C, 0x23, 0x8F, 0x2A, 0x3D, 0xF9, 0x28 },
 };
 
@@ -377,13 +385,13 @@ pub const DmarHeader = extern struct {
 };
 
 pub const DmarEntryType = enum(u16) {
-    Drhd = 0,   // DMA Remapping Hardware Unit Definition
-    Rmrr = 1,   // Reserved Memory Region Reporting
-    Atsr = 2,   // Root Port ATS Capability Reporting
-    Rhsa = 3,   // Remapping Hardware Static Affinity
-    Andd = 4,   // ACPI Name-space Device Declaration
-    Satc = 5,   // SoC Integrated Address Translation Cache
-    Sidp = 6,   // SoC Integrated Device Property
+    Drhd = 0, // DMA Remapping Hardware Unit Definition
+    Rmrr = 1, // Reserved Memory Region Reporting
+    Atsr = 2, // Root Port ATS Capability Reporting
+    Rhsa = 3, // Remapping Hardware Static Affinity
+    Andd = 4, // ACPI Name-space Device Declaration
+    Satc = 5, // SoC Integrated Address Translation Cache
+    Sidp = 6, // SoC Integrated Device Property
 };
 
 pub const DmarDrhd = extern struct {

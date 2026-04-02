@@ -411,7 +411,9 @@ fn startAP(apic_id: u32) bool {
 fn delay(microseconds: u32) void {
     // Crude delay using I/O port (each read ~1µs on most hardware)
     for (0..microseconds) |_| {
-        _ = asm volatile ("inb $0x80, %[result]" : [result] "={al}" (-> u8));
+        _ = asm volatile ("inb $0x80, %[result]"
+            : [result] "={al}" (-> u8),
+        );
     }
 }
 
@@ -425,7 +427,6 @@ fn delay(microseconds: u32) void {
 /// Offset 0x200: Page table pointer
 /// Offset 0x208: Stack pointer for AP
 /// Offset 0x210: Entry point in long mode (ap_main address)
-
 const TRAMPOLINE_GDT_OFFSET: u32 = 0x100;
 const TRAMPOLINE_CR3_OFFSET: u32 = 0x200;
 const TRAMPOLINE_STACK_OFFSET: u32 = 0x208;
@@ -451,7 +452,9 @@ fn setupTrampoline() void {
     @memset(base[0..0x300], 0x90);
 
     // Write CR3 (kernel page table root) at offset 0x200
-    const cr3: u64 = asm volatile ("mov %%cr3, %[cr3]" : [cr3] "=r" (-> u64));
+    const cr3: u64 = asm volatile ("mov %%cr3, %[cr3]"
+        : [cr3] "=r" (-> u64),
+    );
     const cr3_ptr: *volatile u64 = @ptrFromInt(TRAMPOLINE_ADDR + TRAMPOLINE_CR3_OFFSET);
     cr3_ptr.* = cr3;
 

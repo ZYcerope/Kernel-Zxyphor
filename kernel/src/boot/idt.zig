@@ -467,7 +467,7 @@ pub fn initialize() void {
     asm volatile ("lidt (%[idt_ptr])"
         :
         : [idt_ptr] "r" (&idt_pointer),
-        : "memory"
+        : .{ .memory = true }
     );
 
     main.klog(.info, "IDT: Loaded with {d} entries", .{IDT_ENTRIES});

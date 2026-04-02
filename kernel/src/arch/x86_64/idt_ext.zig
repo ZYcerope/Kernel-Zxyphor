@@ -92,7 +92,7 @@ pub const IRQ_BASE: u8 = 32;
 pub const IRQ_COUNT: u8 = 224;
 pub const IDT_ENTRIES: usize = 256;
 
-/// Full interrupt frame pushed by CPU 
+/// Full interrupt frame pushed by CPU
 pub const InterruptFrame = packed struct {
     // Pushed by our stub
     r15: u64,

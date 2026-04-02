@@ -176,17 +176,17 @@ pub inline fn spinHint() void {
 
 /// Memory fence — ensures all preceding stores are visible
 pub inline fn mfence() void {
-    asm volatile ("mfence" ::: "memory");
+    asm volatile ("mfence" ::: .{ .memory = true });
 }
 
 /// Load fence — ensures all preceding loads are completed
 pub inline fn lfence() void {
-    asm volatile ("lfence" ::: "memory");
+    asm volatile ("lfence" ::: .{ .memory = true });
 }
 
 /// Store fence — ensures all preceding stores are completed
 pub inline fn sfence() void {
-    asm volatile ("sfence" ::: "memory");
+    asm volatile ("sfence" ::: .{ .memory = true });
 }
 
 // =============================================================================
@@ -310,7 +310,7 @@ pub inline fn invlpg(addr: u64) void {
     asm volatile ("invlpg (%[addr])"
         :
         : [addr] "r" (addr),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -333,7 +333,7 @@ pub inline fn rdtscp() u64 {
         : [low] "={eax}" (low),
           [high] "={edx}" (high),
         :
-        : "ecx"
+        : .{ .ecx = true }
     );
     return (@as(u64, high) << 32) | @as(u64, low);
 }

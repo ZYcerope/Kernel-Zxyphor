@@ -18,32 +18,32 @@ const std = @import("std");
 // ─────────────────── Constants ──────────────────────────────────────
 
 const IDT_ENTRIES: usize = 256;
-const MAX_IRQ_HANDLERS: usize = 16;   // Max handlers per IRQ (shared)
+const MAX_IRQ_HANDLERS: usize = 16; // Max handlers per IRQ (shared)
 const MAX_IRQ_LINES: usize = 256;
 const MAX_SOFTIRQS: usize = 16;
-const IRQ_BASE: u8 = 0x20;            // IRQs start after exceptions
+const IRQ_BASE: u8 = 0x20; // IRQs start after exceptions
 
 // ─────────────────── Gate Types ─────────────────────────────────────
 
 pub const GateType = enum(u4) {
-    interrupt_gate = 0xE,    // Clear IF on entry
-    trap_gate = 0xF,         // Don't clear IF
-    task_gate = 0x5,         // TSS switch (not used in 64-bit)
+    interrupt_gate = 0xE, // Clear IF on entry
+    trap_gate = 0xF, // Don't clear IF
+    task_gate = 0x5, // TSS switch (not used in 64-bit)
 };
 
 // ─────────────────── IDT Gate Descriptor ────────────────────────────
 
 pub const IdtGate = packed struct {
-    offset_low: u16 = 0,     // Target offset bits 0..15
-    selector: u16 = 0x08,    // Code segment selector (kernel CS)
-    ist: u3 = 0,             // Interrupt Stack Table index
+    offset_low: u16 = 0, // Target offset bits 0..15
+    selector: u16 = 0x08, // Code segment selector (kernel CS)
+    ist: u3 = 0, // Interrupt Stack Table index
     _zero1: u5 = 0,
-    gate_type: u4 = 0xE,     // Interrupt gate
+    gate_type: u4 = 0xE, // Interrupt gate
     _zero2: u1 = 0,
-    dpl: u2 = 0,             // Descriptor Privilege Level
+    dpl: u2 = 0, // Descriptor Privilege Level
     present: u1 = 1,
-    offset_mid: u16 = 0,     // Target offset bits 16..31
-    offset_high: u32 = 0,    // Target offset bits 32..63
+    offset_mid: u16 = 0, // Target offset bits 16..31
+    offset_high: u32 = 0, // Target offset bits 32..63
     _reserved: u32 = 0,
 
     pub fn set_handler(self: *IdtGate, handler: u64, selector: u16, gate_type: GateType, dpl: u2, ist: u3) void {
@@ -106,8 +106,8 @@ pub const Exception = enum(u8) {
 // ─────────────────── IRQ Handler ────────────────────────────────────
 
 pub const IrqReturn = enum(u8) {
-    none = 0,     // Not our IRQ
-    handled = 1,  // Handled
+    none = 0, // Not our IRQ
+    handled = 1, // Handled
     wake_thread = 2, // Handled, wake threaded handler
 };
 
@@ -132,11 +132,11 @@ pub const IrqHandler = struct {
 // ─────────────────── IRQ Flags ──────────────────────────────────────
 
 pub const IrqFlags = packed struct {
-    shared: bool = false,       // Allow shared IRQ
-    probe: bool = false,        // Probing
-    oneshot: bool = false,      // Disable until handler completes
+    shared: bool = false, // Allow shared IRQ
+    probe: bool = false, // Probing
+    oneshot: bool = false, // Disable until handler completes
     no_autoenable: bool = false,
-    no_thread: bool = false,    // Always run in hardirq context
+    no_thread: bool = false, // Always run in hardirq context
     _pad: u3 = 0,
 };
 
@@ -418,7 +418,9 @@ pub const IrqManager = struct {
         switch (vector) {
             0 => {}, // #DE Divide Error
             1 => {}, // #DB Debug
-            2 => { self.nmi_count += 1; }, // NMI
+            2 => {
+                self.nmi_count += 1;
+            }, // NMI
             3 => {}, // #BP Breakpoint
             6 => {}, // #UD Invalid Opcode
             8 => {}, // #DF Double Fault — fatal

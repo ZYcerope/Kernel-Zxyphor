@@ -25,16 +25,16 @@ pub const FredEventType = enum(u8) {
 
 /// FRED entry point level
 pub const FredLevel = enum(u2) {
-    level0 = 0,    // ring-0 events
-    level1 = 1,    // ring-1/2 (rarely used)
-    level2 = 2,    // ring-2
-    level3 = 3,    // ring-3 (user) events
+    level0 = 0, // ring-0 events
+    level1 = 1, // ring-1/2 (rarely used)
+    level2 = 2, // ring-2
+    level3 = 3, // ring-3 (user) events
 };
 
 /// FRED configuration (RSP values for each level)
 pub const FredConfig = struct {
-    stklvls: [4]u64 = [_]u64{0} ** 4,   // RSP for each FRED level
-    entrypoint_kernel: u64 = 0,           // IA32_FRED_CONFIG MSR
+    stklvls: [4]u64 = [_]u64{0} ** 4, // RSP for each FRED level
+    entrypoint_kernel: u64 = 0, // IA32_FRED_CONFIG MSR
     entrypoint_user: u64 = 0,
     enabled: bool = false,
     // Event-level assignments
@@ -54,8 +54,8 @@ pub const FredStackFrame = extern struct {
     rsp: u64,
     ss: u64,
     // FRED additional fields
-    fred_ss_event_type: u64,   // SS + event type + event vector
-    fred_cs_aux: u64,          // CS auxiliary info
+    fred_ss_event_type: u64, // SS + event type + event vector
+    fred_cs_aux: u64, // CS auxiliary info
     // Error code (if applicable)
     error_code: u64,
 };
@@ -80,61 +80,61 @@ pub const FredMsr = enum(u32) {
 
 /// x86 exception vector number
 pub const X86Exception = enum(u8) {
-    divide_error = 0,             // #DE
-    debug = 1,                    // #DB
-    nmi = 2,                      // NMI
-    breakpoint = 3,               // #BP
-    overflow = 4,                 // #OF
-    bound_range = 5,              // #BR
-    invalid_opcode = 6,           // #UD
-    device_not_available = 7,     // #NM
-    double_fault = 8,             // #DF
-    coprocessor_overrun = 9,      // (legacy)
-    invalid_tss = 10,             // #TS
-    segment_not_present = 11,     // #NP
-    stack_fault = 12,             // #SS
-    general_protection = 13,      // #GP
-    page_fault = 14,              // #PF
+    divide_error = 0, // #DE
+    debug = 1, // #DB
+    nmi = 2, // NMI
+    breakpoint = 3, // #BP
+    overflow = 4, // #OF
+    bound_range = 5, // #BR
+    invalid_opcode = 6, // #UD
+    device_not_available = 7, // #NM
+    double_fault = 8, // #DF
+    coprocessor_overrun = 9, // (legacy)
+    invalid_tss = 10, // #TS
+    segment_not_present = 11, // #NP
+    stack_fault = 12, // #SS
+    general_protection = 13, // #GP
+    page_fault = 14, // #PF
     _reserved_15 = 15,
-    x87_fp_error = 16,            // #MF
-    alignment_check = 17,         // #AC
-    machine_check = 18,           // #MC
-    simd_fp_exception = 19,       // #XM / #XF
+    x87_fp_error = 16, // #MF
+    alignment_check = 17, // #AC
+    machine_check = 18, // #MC
+    simd_fp_exception = 19, // #XM / #XF
     virtualization_exception = 20, // #VE
-    control_protection = 21,      // #CP (CET)
+    control_protection = 21, // #CP (CET)
     _reserved_22 = 22,
     _reserved_23 = 23,
     _reserved_24 = 24,
     _reserved_25 = 25,
     _reserved_26 = 26,
     _reserved_27 = 27,
-    hypervisor_injection = 28,    // #HV (AMD SEV-ES)
-    vmm_communication = 29,       // #VC (AMD SEV-ES)
-    security_exception = 30,      // #SX (AMD)
+    hypervisor_injection = 28, // #HV (AMD SEV-ES)
+    vmm_communication = 29, // #VC (AMD SEV-ES)
+    security_exception = 30, // #SX (AMD)
     _reserved_31 = 31,
 };
 
 /// Page fault error code bits
 pub const PageFaultError = packed struct(u64) {
-    present: bool = false,            // P: page was present
-    write: bool = false,              // W/R: write access
-    user: bool = false,               // U/S: user mode
-    reserved_write: bool = false,     // RSVD: reserved bit set
-    instruction_fetch: bool = false,  // I/D: instruction fetch
-    protection_key: bool = false,     // PK: protection key violation
-    shadow_stack: bool = false,       // SS: shadow stack
-    hlat: bool = false,               // HLAT
+    present: bool = false, // P: page was present
+    write: bool = false, // W/R: write access
+    user: bool = false, // U/S: user mode
+    reserved_write: bool = false, // RSVD: reserved bit set
+    instruction_fetch: bool = false, // I/D: instruction fetch
+    protection_key: bool = false, // PK: protection key violation
+    shadow_stack: bool = false, // SS: shadow stack
+    hlat: bool = false, // HLAT
     _reserved: u7 = 0,
-    sgx: bool = false,                // SGX: SGX violation
+    sgx: bool = false, // SGX: SGX violation
     _padding: u48 = 0,
 };
 
 /// #GP error code (for segment-related)
 pub const GpErrorCode = packed struct(u32) {
-    ext: bool = false,        // external event
-    idt: bool = false,        // IDT reference
-    ti: bool = false,         // GDT/LDT (0=GDT, 1=LDT)
-    selector_index: u13 = 0,  // segment selector index
+    ext: bool = false, // external event
+    idt: bool = false, // IDT reference
+    ti: bool = false, // GDT/LDT (0=GDT, 1=LDT)
+    selector_index: u13 = 0, // segment selector index
     _padding: u16 = 0,
 };
 
@@ -188,11 +188,11 @@ pub const MsiMessage = struct {
 /// MSI address format (x86)
 pub const MsiAddress = packed struct(u32) {
     _reserved_low: u2 = 0,
-    destination_mode: bool = false,   // 0=physical, 1=logical
+    destination_mode: bool = false, // 0=physical, 1=logical
     redirection_hint: bool = false,
     _reserved_mid: u8 = 0,
     destination_id: u8 = 0,
-    base_address: u12 = 0xFEE,       // fixed MSI base
+    base_address: u12 = 0xFEE, // fixed MSI base
 };
 
 /// MSI data format (x86)
@@ -201,7 +201,7 @@ pub const MsiData = packed struct(u32) {
     delivery_mode: u3 = 0,
     _reserved: u3 = 0,
     level: bool = false,
-    trigger_mode: bool = false,       // 0=edge, 1=level
+    trigger_mode: bool = false, // 0=edge, 1=level
     _padding: u16 = 0,
 };
 
@@ -210,7 +210,7 @@ pub const MsixTableEntry = extern struct {
     msg_addr: u32,
     msg_upper_addr: u32,
     msg_data: u32,
-    vector_control: u32,    // bit 0 = masked
+    vector_control: u32, // bit 0 = masked
 };
 
 /// MSI capability descriptor
@@ -246,8 +246,8 @@ pub const IrqDomainDesc = struct {
     domain_type: IrqDomainType = .linear,
     nr_irqs: u32 = 0,
     hwirq_max: u32 = 0,
-    parent_domain: u64 = 0,           // parent IRQ domain for hierarchy
-    fwnode: u64 = 0,                   // firmware node
+    parent_domain: u64 = 0, // parent IRQ domain for hierarchy
+    fwnode: u64 = 0, // firmware node
     bus_token: IrqDomainBusToken = .any,
     flags: IrqDomainFlags = .{},
 };

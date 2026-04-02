@@ -205,8 +205,8 @@ pub const CpuidExtFeatureEcx7 = packed struct(u32) {
     tme: bool = false,
     avx512_vpopcntdq: bool = false,
     _reserved1: bool = false,
-    la57: bool = false,           // 5-level paging
-    mawau: u5 = 0,               // MAWAU for MPX
+    la57: bool = false, // 5-level paging
+    mawau: u5 = 0, // MAWAU for MPX
     rdpid: bool = false,
     kl: bool = false,
     bus_lock_detect: bool = false,
@@ -262,50 +262,50 @@ pub const CpuidExtFeatureEdx7 = packed struct(u32) {
 // ============================================================================
 
 pub const Cr0Bits = packed struct(u64) {
-    pe: bool = false,          // Protected Mode Enable
-    mp: bool = false,          // Monitor Co-processor
-    em: bool = false,          // Emulation
-    ts: bool = false,          // Task Switched
-    et: bool = true,           // Extension Type
-    ne: bool = false,          // Numeric Error
+    pe: bool = false, // Protected Mode Enable
+    mp: bool = false, // Monitor Co-processor
+    em: bool = false, // Emulation
+    ts: bool = false, // Task Switched
+    et: bool = true, // Extension Type
+    ne: bool = false, // Numeric Error
     _reserved1: u10 = 0,
-    wp: bool = false,          // Write Protect
+    wp: bool = false, // Write Protect
     _reserved2: bool = false,
-    am: bool = false,          // Alignment Mask
+    am: bool = false, // Alignment Mask
     _reserved3: u10 = 0,
-    nw: bool = false,          // Not Write-Through
-    cd: bool = false,          // Cache Disable
-    pg: bool = false,          // Paging
+    nw: bool = false, // Not Write-Through
+    cd: bool = false, // Cache Disable
+    pg: bool = false, // Paging
     _reserved4: u32 = 0,
 };
 
 pub const Cr4Bits = packed struct(u64) {
-    vme: bool = false,         // Virtual-8086 Mode Extensions
-    pvi: bool = false,         // Protected Virtual Interrupts
-    tsd: bool = false,         // Time Stamp Disable
-    de: bool = false,          // Debugging Extensions
-    pse: bool = false,         // Page Size Extension
-    pae: bool = true,          // Physical Address Extension
-    mce: bool = false,         // Machine Check Enable
-    pge: bool = false,         // Page Global Enable
-    pce: bool = false,         // Performance Monitoring Counter Enable
-    osfxsr: bool = false,      // OS FXSAVE/FXRSTOR Support
-    osxmmexcpt: bool = false,  // OS Unmasked SIMD FP Exception
-    umip: bool = false,        // User-Mode Instruction Prevention
-    la57: bool = false,        // 57-bit Linear Addresses (5-lvl paging)
-    vmxe: bool = false,        // VMX Enable
-    smxe: bool = false,        // SMX Enable
+    vme: bool = false, // Virtual-8086 Mode Extensions
+    pvi: bool = false, // Protected Virtual Interrupts
+    tsd: bool = false, // Time Stamp Disable
+    de: bool = false, // Debugging Extensions
+    pse: bool = false, // Page Size Extension
+    pae: bool = true, // Physical Address Extension
+    mce: bool = false, // Machine Check Enable
+    pge: bool = false, // Page Global Enable
+    pce: bool = false, // Performance Monitoring Counter Enable
+    osfxsr: bool = false, // OS FXSAVE/FXRSTOR Support
+    osxmmexcpt: bool = false, // OS Unmasked SIMD FP Exception
+    umip: bool = false, // User-Mode Instruction Prevention
+    la57: bool = false, // 57-bit Linear Addresses (5-lvl paging)
+    vmxe: bool = false, // VMX Enable
+    smxe: bool = false, // SMX Enable
     _reserved1: bool = false,
-    fsgsbase: bool = false,    // FSGSBASE Enable
-    pcide: bool = false,       // PCID Enable
-    osxsave: bool = false,     // XSAVE Enable
-    kl: bool = false,          // Key Locker Enable
-    smep: bool = false,        // SMEP Enable
-    smap: bool = false,        // SMAP Enable
-    pke: bool = false,         // Protection Keys Enable
-    cet: bool = false,         // CET Enable
-    pks: bool = false,         // PKS Enable
-    uintr: bool = false,       // User Interrupts Enable
+    fsgsbase: bool = false, // FSGSBASE Enable
+    pcide: bool = false, // PCID Enable
+    osxsave: bool = false, // XSAVE Enable
+    kl: bool = false, // Key Locker Enable
+    smep: bool = false, // SMEP Enable
+    smap: bool = false, // SMAP Enable
+    pke: bool = false, // Protection Keys Enable
+    cet: bool = false, // CET Enable
+    pks: bool = false, // PKS Enable
+    uintr: bool = false, // User Interrupts Enable
     _reserved2: u38 = 0,
 };
 
@@ -443,7 +443,7 @@ pub const CpuTopology = struct {
     threads_per_core: u8,
     llc_shared_cpus: u16,
     numa_nodes: u16,
-    numa_distance: [16][16]u16,    // 16×16 distance matrix
+    numa_distance: [16][16]u16, // 16×16 distance matrix
     has_asymmetric_cores: bool,
     big_cores: u16,
     little_cores: u16,

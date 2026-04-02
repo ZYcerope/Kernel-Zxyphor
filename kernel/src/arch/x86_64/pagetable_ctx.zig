@@ -13,14 +13,14 @@ const std = @import("std");
 pub const PTE_PRESENT: u64 = 1 << 0;
 pub const PTE_WRITABLE: u64 = 1 << 1;
 pub const PTE_USER: u64 = 1 << 2;
-pub const PTE_PWT: u64 = 1 << 3;       // Page Write-Through
-pub const PTE_PCD: u64 = 1 << 4;       // Page Cache Disable
+pub const PTE_PWT: u64 = 1 << 3; // Page Write-Through
+pub const PTE_PCD: u64 = 1 << 4; // Page Cache Disable
 pub const PTE_ACCESSED: u64 = 1 << 5;
 pub const PTE_DIRTY: u64 = 1 << 6;
-pub const PTE_PAT: u64 = 1 << 7;       // Page Attribute Table (for 4K pages)
-pub const PTE_HUGE: u64 = 1 << 7;      // PS bit for PDE/PDPE (2MB/1GB pages)
+pub const PTE_PAT: u64 = 1 << 7; // Page Attribute Table (for 4K pages)
+pub const PTE_HUGE: u64 = 1 << 7; // PS bit for PDE/PDPE (2MB/1GB pages)
 pub const PTE_GLOBAL: u64 = 1 << 8;
-pub const PTE_NX: u64 = 1 << 63;       // No Execute
+pub const PTE_NX: u64 = 1 << 63; // No Execute
 
 // Software-defined bits (available bits 9-11, 52-62)
 pub const PTE_SOFT_DIRTY: u64 = 1 << 9;
@@ -96,11 +96,11 @@ pub const PageTableEntry = packed struct(u64) {
 // ============================================================================
 
 pub const PageTableLevel = enum(u3) {
-    pml5 = 5,     // 5-level: 256 PB virtual address range
-    pml4 = 4,     // 4-level: 256 TB
-    pdpt = 3,     // Page Directory Pointer Table (1 GB pages)
-    pd = 2,       // Page Directory (2 MB pages)
-    pt = 1,       // Page Table (4 KB pages)
+    pml5 = 5, // 5-level: 256 PB virtual address range
+    pml4 = 4, // 4-level: 256 TB
+    pdpt = 3, // Page Directory Pointer Table (1 GB pages)
+    pd = 2, // Page Directory (2 MB pages)
+    pt = 1, // Page Table (4 KB pages)
 };
 
 pub const ENTRIES_PER_TABLE: u32 = 512;
@@ -111,7 +111,7 @@ pub const VA_PML4_SHIFT: u6 = 39;
 pub const VA_PDPT_SHIFT: u6 = 30;
 pub const VA_PD_SHIFT: u6 = 21;
 pub const VA_PT_SHIFT: u6 = 12;
-pub const VA_INDEX_MASK: u64 = 0x1FF;  // 9 bits
+pub const VA_INDEX_MASK: u64 = 0x1FF; // 9 bits
 
 // Virtual address breakdown (5-level paging, 57-bit virtual)
 pub const VA_PML5_SHIFT: u6 = 48;
@@ -142,9 +142,9 @@ pub fn pt_index(va: u64) u9 {
 
 pub const CR3_PCD: u64 = 1 << 4;
 pub const CR3_PWT: u64 = 1 << 3;
-pub const CR3_PCID_MASK: u64 = 0xFFF;            // PCID in bits 0-11
+pub const CR3_PCID_MASK: u64 = 0xFFF; // PCID in bits 0-11
 pub const CR3_ADDR_MASK: u64 = 0x000FFFFFFFFFF000;
-pub const CR3_NOFLUSH: u64 = 1 << 63;             // Don't flush TLB on CR3 write
+pub const CR3_NOFLUSH: u64 = 1 << 63; // Don't flush TLB on CR3 write
 
 pub const Cr3Value = struct {
     raw: u64,
@@ -174,37 +174,37 @@ pub const Cr3Value = struct {
 // CR4 bits (relevant to paging)
 // ============================================================================
 
-pub const CR4_PSE: u64 = 1 << 4;          // Page Size Extension
-pub const CR4_PAE: u64 = 1 << 5;          // Physical Address Extension
-pub const CR4_PGE: u64 = 1 << 7;          // Page Global Enable
-pub const CR4_PCE: u64 = 1 << 8;          // Performance Counter Enable
-pub const CR4_OSFXSR: u64 = 1 << 9;       // OS FXSAVE/FXRSTOR
-pub const CR4_OSXMMEXCPT: u64 = 1 << 10;  // OS unmasked SIMD FP exceptions
-pub const CR4_UMIP: u64 = 1 << 11;        // User Mode Instruction Prevention
-pub const CR4_LA57: u64 = 1 << 12;        // 5-level paging
-pub const CR4_VMXE: u64 = 1 << 13;        // VMX Enable
-pub const CR4_SMXE: u64 = 1 << 14;        // SMX Enable
-pub const CR4_FSGSBASE: u64 = 1 << 16;    // FSGSBASE instructions
-pub const CR4_PCIDE: u64 = 1 << 17;       // PCID Enable
-pub const CR4_OSXSAVE: u64 = 1 << 18;     // XSAVE/XRSTOR
-pub const CR4_KL: u64 = 1 << 19;          // Key Locker
-pub const CR4_SMEP: u64 = 1 << 20;        // Supervisor Mode Execution Prevention
-pub const CR4_SMAP: u64 = 1 << 21;        // Supervisor Mode Access Prevention
-pub const CR4_PKE: u64 = 1 << 22;         // Protection Keys (user)
-pub const CR4_CET: u64 = 1 << 23;         // Control-flow Enforcement
-pub const CR4_PKS: u64 = 1 << 24;         // Protection Keys (supervisor)
+pub const CR4_PSE: u64 = 1 << 4; // Page Size Extension
+pub const CR4_PAE: u64 = 1 << 5; // Physical Address Extension
+pub const CR4_PGE: u64 = 1 << 7; // Page Global Enable
+pub const CR4_PCE: u64 = 1 << 8; // Performance Counter Enable
+pub const CR4_OSFXSR: u64 = 1 << 9; // OS FXSAVE/FXRSTOR
+pub const CR4_OSXMMEXCPT: u64 = 1 << 10; // OS unmasked SIMD FP exceptions
+pub const CR4_UMIP: u64 = 1 << 11; // User Mode Instruction Prevention
+pub const CR4_LA57: u64 = 1 << 12; // 5-level paging
+pub const CR4_VMXE: u64 = 1 << 13; // VMX Enable
+pub const CR4_SMXE: u64 = 1 << 14; // SMX Enable
+pub const CR4_FSGSBASE: u64 = 1 << 16; // FSGSBASE instructions
+pub const CR4_PCIDE: u64 = 1 << 17; // PCID Enable
+pub const CR4_OSXSAVE: u64 = 1 << 18; // XSAVE/XRSTOR
+pub const CR4_KL: u64 = 1 << 19; // Key Locker
+pub const CR4_SMEP: u64 = 1 << 20; // Supervisor Mode Execution Prevention
+pub const CR4_SMAP: u64 = 1 << 21; // Supervisor Mode Access Prevention
+pub const CR4_PKE: u64 = 1 << 22; // Protection Keys (user)
+pub const CR4_CET: u64 = 1 << 23; // Control-flow Enforcement
+pub const CR4_PKS: u64 = 1 << 24; // Protection Keys (supervisor)
 
 // ============================================================================
 // PCID (Process Context Identifier)
 // ============================================================================
 
-pub const MAX_PCID: u16 = 4096;  // 12-bit
+pub const MAX_PCID: u16 = 4096; // 12-bit
 
 pub const PcidAllocator = struct {
     next_pcid: u16,
     max_pcid: u16,
     // Bitmap of used PCIDs
-    used_bitmap: [64]u64,     // 4096 bits
+    used_bitmap: [64]u64, // 4096 bits
     // Stats
     total_allocated: u64,
     total_freed: u64,
@@ -222,10 +222,10 @@ pub const PcidAllocator = struct {
 // ============================================================================
 
 pub const InvpcidType = enum(u64) {
-    individual_address = 0,     // Invalidate single address for PCID
-    single_context = 1,         // Invalidate all for specific PCID
-    all_including_global = 2,   // Invalidate all + global
-    all_non_global = 3,         // Invalidate all except global
+    individual_address = 0, // Invalidate single address for PCID
+    single_context = 1, // Invalidate all for specific PCID
+    all_including_global = 2, // Invalidate all + global
+    all_non_global = 3, // Invalidate all except global
 };
 
 pub const InvpcidDesc = packed struct {
@@ -238,11 +238,11 @@ pub const InvpcidDesc = packed struct {
 // ============================================================================
 
 pub const TlbFlushMode = enum(u8) {
-    local = 0,              // Local CPU only
-    local_range = 1,        // Local CPU, address range
-    remote = 2,             // All CPUs (IPI)
-    remote_range = 3,       // All CPUs, address range
-    lazy = 4,               // Lazy flush
+    local = 0, // Local CPU only
+    local_range = 1, // Local CPU, address range
+    remote = 2, // All CPUs (IPI)
+    remote_range = 3, // All CPUs, address range
+    lazy = 4, // Lazy flush
 };
 
 pub const TlbFlushRequest = struct {
@@ -257,7 +257,7 @@ pub const TlbFlushRequest = struct {
     pcid: u12,
     flush_pcid: bool,
     // CPU mask for remote flushes
-    cpu_mask: [4]u64,       // Up to 256 CPUs
+    cpu_mask: [4]u64, // Up to 256 CPUs
     // Flags
     flush_global: bool,
     flush_all: bool,
@@ -266,7 +266,7 @@ pub const TlbFlushRequest = struct {
 
 pub const TlbState = struct {
     // CPU state
-    loaded_mm_asid: u16,       // Currently loaded MM's ASID
+    loaded_mm_asid: u16, // Currently loaded MM's ASID
     next_asid: u16,
     // PCID state
     ctxs: [MAX_PCID]TlbContext,
@@ -282,8 +282,8 @@ pub const TlbState = struct {
 };
 
 pub const TlbContext = struct {
-    ctx_id: u64,           // Unique context ID for this PCID slot
-    tlb_gen: u64,          // Generation counter
+    ctx_id: u64, // Unique context ID for this PCID slot
+    tlb_gen: u64, // Generation counter
 };
 
 // ============================================================================
@@ -336,18 +336,18 @@ pub const CpuContext = struct {
     fpu_state_offset: u32,
     fpu_state_size: u32,
     // Thread-local storage
-    tls_array: [3]u64,     // GDT TLS entries
+    tls_array: [3]u64, // GDT TLS entries
     // I/O permission bitmap
     io_bitmap_offset: u32,
     io_bitmap_size: u32,
 };
 
 pub const FpuStateType = enum(u8) {
-    legacy_fxsave = 0,     // 512 bytes (SSE)
-    xsave = 1,             // Variable (AVX, AVX-512, AMX, etc.)
+    legacy_fxsave = 0, // 512 bytes (SSE)
+    xsave = 1, // Variable (AVX, AVX-512, AMX, etc.)
     xsaveopt = 2,
-    xsavec = 3,            // Compacted
-    xsaves = 4,            // Supervisor state
+    xsavec = 3, // Compacted
+    xsaves = 4, // Supervisor state
 };
 
 pub const FpuState = struct {
@@ -357,15 +357,15 @@ pub const FpuState = struct {
     xsave_bv: u64,
     xcomp_bv: u64,
     // Offsets of known components
-    fpu_offset: u32,       // Legacy x87 + SSE: 0
-    avx_offset: u32,       // YMM: 576
-    avx512_opmask_offset: u32,    // k0-k7: typically 832
+    fpu_offset: u32, // Legacy x87 + SSE: 0
+    avx_offset: u32, // YMM: 576
+    avx512_opmask_offset: u32, // k0-k7: typically 832
     avx512_zmm_hi256_offset: u32, // ZMM0-15 upper: typically 896
-    avx512_hi16_zmm_offset: u32,  // ZMM16-31: typically 1408
-    mpx_bndregs_offset: u32,      // BND0-3 bounds
-    mpx_bndcsr_offset: u32,       // BNDCFGU + BNDSTATUS
-    pkru_offset: u32,             // Protection Keys
-    amx_offset: u32,              // AMX (TILECFG + TILEDATA)
+    avx512_hi16_zmm_offset: u32, // ZMM16-31: typically 1408
+    mpx_bndregs_offset: u32, // BND0-3 bounds
+    mpx_bndcsr_offset: u32, // BNDCFGU + BNDSTATUS
+    pkru_offset: u32, // Protection Keys
+    amx_offset: u32, // AMX (TILECFG + TILEDATA)
     // CET
     cet_user_offset: u32,
     cet_supervisor_offset: u32,
@@ -397,7 +397,7 @@ pub const XSTATE_LBR: u64 = 1 << 15;
 pub const XSTATE_HWP: u64 = 1 << 16;
 pub const XSTATE_AMX_TILECFG: u64 = 1 << 17;
 pub const XSTATE_AMX_TILEDATA: u64 = 1 << 18;
-pub const XSTATE_APX: u64 = 1 << 19;      // APX extended GPRs
+pub const XSTATE_APX: u64 = 1 << 19; // APX extended GPRs
 
 // ============================================================================
 // KPTI (Kernel Page Table Isolation) / Meltdown mitigation
@@ -423,11 +423,11 @@ pub const KptiConfig = struct {
 // ============================================================================
 
 pub const PatType = enum(u3) {
-    uncacheable = 0,       // UC
-    write_combining = 1,   // WC
-    write_through = 4,     // WT
-    write_protected = 5,   // WP
-    write_back = 6,        // WB
+    uncacheable = 0, // UC
+    write_combining = 1, // WC
+    write_through = 4, // WT
+    write_protected = 5, // WP
+    write_back = 6, // WB
     uncacheable_minus = 7, // UC-
 };
 
@@ -442,33 +442,33 @@ pub const PatEntry = struct {
 
 // Default PAT configuration
 pub const DEFAULT_PAT: [8]PatType = .{
-    .write_back,          // PAT0: WB
-    .write_through,       // PAT1: WT
-    .uncacheable_minus,   // PAT2: UC-
-    .uncacheable,         // PAT3: UC
-    .write_back,          // PAT4: WB
-    .write_through,       // PAT5: WT
-    .uncacheable_minus,   // PAT6: UC-
-    .uncacheable,         // PAT7: UC
+    .write_back, // PAT0: WB
+    .write_through, // PAT1: WT
+    .uncacheable_minus, // PAT2: UC-
+    .uncacheable, // PAT3: UC
+    .write_back, // PAT4: WB
+    .write_through, // PAT5: WT
+    .uncacheable_minus, // PAT6: UC-
+    .uncacheable, // PAT7: UC
 };
 
 // Zxyphor optimized PAT
 pub const ZXYPHOR_PAT: [8]PatType = .{
-    .write_back,          // PAT0: WB (default)
-    .write_combining,     // PAT1: WC (for framebuffers)
-    .uncacheable_minus,   // PAT2: UC- (for MMIO)
-    .uncacheable,         // PAT3: UC (for strong UC)
-    .write_back,          // PAT4: WB
-    .write_protected,     // PAT5: WP (for CoW)
-    .write_through,       // PAT6: WT (for shared data)
-    .write_combining,     // PAT7: WC (more WC slots)
+    .write_back, // PAT0: WB (default)
+    .write_combining, // PAT1: WC (for framebuffers)
+    .uncacheable_minus, // PAT2: UC- (for MMIO)
+    .uncacheable, // PAT3: UC (for strong UC)
+    .write_back, // PAT4: WB
+    .write_protected, // PAT5: WP (for CoW)
+    .write_through, // PAT6: WT (for shared data)
+    .write_combining, // PAT7: WC (more WC slots)
 };
 
 // ============================================================================
 // PKU (Protection Keys for Userspace)
 // ============================================================================
 
-pub const MAX_PKEYS: u32 = 16;   // 4-bit protection key, 16 keys
+pub const MAX_PKEYS: u32 = 16; // 4-bit protection key, 16 keys
 
 pub const PkruValue = packed struct(u32) {
     // Two bits per key: AD (Access Disabled) and WD (Write Disabled)
@@ -512,7 +512,7 @@ pub const PkeyState = struct {
     allocated: [MAX_PKEYS]bool,
     nr_allocated: u8,
     // Execute-only support
-    execute_only_pkey: i8,      // -1 if not available
+    execute_only_pkey: i8, // -1 if not available
 };
 
 // ============================================================================
@@ -568,8 +568,8 @@ pub const CetState = struct {
 
 pub const LamMode = enum(u8) {
     disabled = 0,
-    lam_u48 = 1,         // 48-bit LAM (bits 62:48 available)
-    lam_u57 = 2,         // 57-bit LAM (bits 62:57 available)
+    lam_u48 = 1, // 48-bit LAM (bits 62:48 available)
+    lam_u57 = 2, // 57-bit LAM (bits 62:57 available)
 };
 
 pub const LamState = struct {

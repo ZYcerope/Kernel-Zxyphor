@@ -13,14 +13,14 @@ const std = @import("std");
 
 /// TSC calibration method
 pub const TscCalibMethod = enum(u8) {
-    pit = 0,            // PIT-based calibration
-    hpet = 1,           // HPET-based calibration
-    pmtimer = 2,        // ACPI PM Timer
-    cpuid_15h = 3,      // CPUID leaf 15H (core crystal clock)
-    cpuid_16h = 4,      // CPUID leaf 16H (processor frequency)
-    msr = 5,            // MSR-based (model-specific)
-    art = 6,            // Always Running Timer
-    hypervisor = 7,     // Hypervisor provided
+    pit = 0, // PIT-based calibration
+    hpet = 1, // HPET-based calibration
+    pmtimer = 2, // ACPI PM Timer
+    cpuid_15h = 3, // CPUID leaf 15H (core crystal clock)
+    cpuid_16h = 4, // CPUID leaf 16H (processor frequency)
+    msr = 5, // MSR-based (model-specific)
+    art = 6, // Always Running Timer
+    hypervisor = 7, // Hypervisor provided
     // Zxyphor
     zxy_adaptive = 100, // Adaptive multi-source calibration
 };
@@ -30,9 +30,9 @@ pub const TscState = enum(u8) {
     unknown = 0,
     unstable = 1,
     reliable = 2,
-    constant = 3,       // constant_tsc CPUID
-    nonstop = 4,        // nonstop_tsc CPUID
-    invariant = 5,      // invariant TSC
+    constant = 3, // constant_tsc CPUID
+    nonstop = 4, // nonstop_tsc CPUID
+    invariant = 5, // invariant TSC
 };
 
 /// TSC calibration result
@@ -74,7 +74,7 @@ pub const UcodeVendor = enum(u8) {
 pub const IntelUcodeHeader = extern struct {
     header_version: u32,
     update_revision: u32,
-    date: u32,                // BCD: MMDDYYYY
+    date: u32, // BCD: MMDDYYYY
     processor_signature: u32,
     checksum: u32,
     loader_revision: u32,
@@ -118,7 +118,7 @@ pub const UcodeUpdateStatus = enum(u8) {
 pub const UcodeInfo = struct {
     vendor: UcodeVendor = .intel,
     cpu_signature: u32 = 0,
-    pf: u32 = 0,              // platform flags (Intel)
+    pf: u32 = 0, // platform flags (Intel)
     current_revision: u32 = 0,
     new_revision: u32 = 0,
     date: u32 = 0,
@@ -133,8 +133,8 @@ pub const UcodeInfo = struct {
 
 /// ACPI PM Timer
 pub const PmTimer = struct {
-    io_port: u16 = 0x408,    // default ACPI PM timer port
-    width32: bool = false,    // 24-bit vs 32-bit
+    io_port: u16 = 0x408, // default ACPI PM timer port
+    width32: bool = false, // 24-bit vs 32-bit
     frequency: u32 = 3579545, // 3.579545 MHz
     verified: bool = false,
 };
@@ -150,13 +150,13 @@ pub const PitMode = enum(u8) {
 };
 
 pub const PitChannel = enum(u8) {
-    channel0 = 0,    // IRQ 0
-    channel1 = 1,    // DRAM refresh (legacy)
-    channel2 = 2,    // PC speaker
+    channel0 = 0, // IRQ 0
+    channel1 = 1, // DRAM refresh (legacy)
+    channel2 = 2, // PC speaker
 };
 
 pub const PitDesc = struct {
-    frequency: u32 = 1193182,  // 1.193182 MHz
+    frequency: u32 = 1193182, // 1.193182 MHz
     mode: PitMode = .rate_generator,
     divisor: u16 = 0,
     counter_latch: u16 = 0,
@@ -172,23 +172,23 @@ pub const PIT_COMMAND = 0x43;
 pub const HpetCapabilities = packed struct(u64) {
     rev_id: u8 = 0,
     num_tim_cap: u5 = 0,
-    count_size_cap: bool = false,    // 64-bit
+    count_size_cap: bool = false, // 64-bit
     _reserved: bool = false,
     legacy_route_cap: bool = false,
     vendor_id: u16 = 0,
-    counter_clk_period: u32 = 0,    // femtoseconds
+    counter_clk_period: u32 = 0, // femtoseconds
 };
 
 pub const HpetTimerConfig = packed struct(u64) {
     _reserved0: bool = false,
-    int_type_cnf: bool = false,     // 0=edge, 1=level
+    int_type_cnf: bool = false, // 0=edge, 1=level
     int_enb_cnf: bool = false,
-    type_cnf: bool = false,          // 0=non-periodic, 1=periodic
+    type_cnf: bool = false, // 0=non-periodic, 1=periodic
     per_int_cap: bool = false,
-    size_cap: bool = false,          // 64-bit
+    size_cap: bool = false, // 64-bit
     val_set_cnf: bool = false,
     _reserved1: bool = false,
-    mode32_cnf: bool = false,        // force 32-bit
+    mode32_cnf: bool = false, // force 32-bit
     int_route_cnf: u5 = 0,
     fsb_en_cnf: bool = false,
     fsb_int_del_cap: bool = false,
@@ -200,7 +200,7 @@ pub const HpetRegister = struct {
     base_address: u64 = 0,
     capabilities: HpetCapabilities = .{},
     num_timers: u8 = 0,
-    period_fs: u64 = 0,              // femtoseconds per tick
+    period_fs: u64 = 0, // femtoseconds per tick
     frequency_hz: u64 = 0,
     is_64bit: bool = false,
     legacy_replacement: bool = false,
@@ -301,8 +301,8 @@ pub const ClkEvtDevDesc = struct {
     mode: ClkEvtMode = .unused,
     irq: i32 = -1,
     cpumask: u64 = 0,
-    next_event: i64 = 0,         // ktime
-    bound_on: i32 = -1,          // CPU
+    next_event: i64 = 0, // ktime
+    bound_on: i32 = -1, // CPU
 };
 
 // ============================================================================
@@ -324,9 +324,9 @@ pub const TimekeeperData = struct {
     wall_to_monotonic_sec: i64 = 0,
     wall_to_monotonic_nsec: i64 = 0,
     // Offsets
-    offs_real: i64 = 0,         // ktime offset to realtime
-    offs_boot: i64 = 0,         // ktime offset to boottime
-    offs_tai: i64 = 0,          // ktime offset to TAI
+    offs_real: i64 = 0, // ktime offset to realtime
+    offs_boot: i64 = 0, // ktime offset to boottime
+    offs_tai: i64 = 0, // ktime offset to TAI
     // NTP state
     ntp_tick: u64 = 0,
     ntp_error: i64 = 0,
@@ -370,34 +370,34 @@ pub const ClockId = enum(u32) {
 
 /// NTP status bits
 pub const NtpStatus = packed struct(u32) {
-    pll: bool = false,           // STA_PLL
-    ppsfreq: bool = false,      // STA_PPSFREQ
-    ppstime: bool = false,      // STA_PPSTIME
-    fll: bool = false,          // STA_FLL
-    ins: bool = false,          // STA_INS (insert leap second)
-    del: bool = false,          // STA_DEL (delete leap second)
-    unsync: bool = false,       // STA_UNSYNC
-    freqhold: bool = false,     // STA_FREQHOLD
-    ppssignal: bool = false,    // STA_PPSSIGNAL
-    ppsjitter: bool = false,    // STA_PPSJITTER
-    ppswander: bool = false,    // STA_PPSWANDER
-    ppserror: bool = false,     // STA_PPSERROR
-    clockerr: bool = false,     // STA_CLOCKERR
-    nano: bool = false,         // STA_NANO (nanosecond resolution)
-    mode: bool = false,         // STA_MODE (FLL/PLL)
-    clk: bool = false,          // STA_CLK (clock source select)
+    pll: bool = false, // STA_PLL
+    ppsfreq: bool = false, // STA_PPSFREQ
+    ppstime: bool = false, // STA_PPSTIME
+    fll: bool = false, // STA_FLL
+    ins: bool = false, // STA_INS (insert leap second)
+    del: bool = false, // STA_DEL (delete leap second)
+    unsync: bool = false, // STA_UNSYNC
+    freqhold: bool = false, // STA_FREQHOLD
+    ppssignal: bool = false, // STA_PPSSIGNAL
+    ppsjitter: bool = false, // STA_PPSJITTER
+    ppswander: bool = false, // STA_PPSWANDER
+    ppserror: bool = false, // STA_PPSERROR
+    clockerr: bool = false, // STA_CLOCKERR
+    nano: bool = false, // STA_NANO (nanosecond resolution)
+    mode: bool = false, // STA_MODE (FLL/PLL)
+    clk: bool = false, // STA_CLK (clock source select)
     _padding: u16 = 0,
 };
 
 /// NTP timex (adjtimex)
 pub const NtpTimex = struct {
     modes: u32 = 0,
-    offset: i64 = 0,            // nanoseconds (with STA_NANO)
-    freq: i64 = 0,              // frequency offset (ppm << 16)
+    offset: i64 = 0, // nanoseconds (with STA_NANO)
+    freq: i64 = 0, // frequency offset (ppm << 16)
     maxerror: i64 = 0,
     esterror: i64 = 0,
     status: NtpStatus = .{},
-    constant: i64 = 0,          // PLL time constant
+    constant: i64 = 0, // PLL time constant
     precision: i64 = 0,
     tolerance: i64 = 0,
     time: Timespec64 = .{},
@@ -410,7 +410,7 @@ pub const NtpTimex = struct {
     calcnt: i64 = 0,
     errcnt: i64 = 0,
     stbcnt: i64 = 0,
-    tai: i32 = 0,               // TAI offset
+    tai: i32 = 0, // TAI offset
 };
 
 /// Leap second state
@@ -438,7 +438,7 @@ pub const ApicTimerDesc = struct {
     mode: ApicTimerMode = .periodic,
     initial_count: u32 = 0,
     current_count: u32 = 0,
-    divide_config: u8 = 0,     // divider value
+    divide_config: u8 = 0, // divider value
     vector: u8 = 0,
     calibrated_freq: u64 = 0,
     ticks_per_us: u32 = 0,
@@ -446,10 +446,10 @@ pub const ApicTimerDesc = struct {
 
 /// x2APIC timer MSRs
 pub const X2ApicTimerMsr = enum(u32) {
-    icr = 0x838,               // Initial Count Register
-    ccr = 0x839,               // Current Count Register
-    dcr = 0x83E,               // Divide Configuration Register
-    lvt_timer = 0x832,         // LVT Timer Register
+    icr = 0x838, // Initial Count Register
+    ccr = 0x839, // Current Count Register
+    dcr = 0x83E, // Divide Configuration Register
+    lvt_timer = 0x832, // LVT Timer Register
 };
 
 // ============================================================================
@@ -464,7 +464,7 @@ pub const VdsoData = extern struct {
     mask: u64,
     mult: u32,
     shift: u32,
-    basetime: [12]VdsoTimestamp,  // one per CLOCK_*
+    basetime: [12]VdsoTimestamp, // one per CLOCK_*
     tz_minuteswest: i32,
     tz_dsttime: i32,
     hrtimer_res: u32,

@@ -64,8 +64,8 @@ pub const PerfCacheId = enum(u8) {
     ll = 2,
     dtlb = 3,
     itlb = 4,
-    bpu = 5,       // branch prediction unit
-    node = 6,      // NUMA node
+    bpu = 5, // branch prediction unit
+    node = 6, // NUMA node
 };
 
 pub const PerfCacheOp = enum(u8) {
@@ -87,13 +87,13 @@ pub const PerfCacheOpResult = enum(u8) {
 pub const PerfEventAttr = extern struct {
     type_id: PerfType,
     size: u32,
-    config: u64,                   // HW/SW event ID or raw config
+    config: u64, // HW/SW event ID or raw config
     sample_period_or_freq: u64,
     sample_type: PerfSampleType,
     read_format: PerfReadFormat,
     flags: PerfAttrFlags,
     wakeup_events_or_watermark: u32,
-    bp_type: u32,                  // for breakpoints
+    bp_type: u32, // for breakpoints
     bp_addr_or_kprobe: u64,
     bp_len_or_kprobe_func: u64,
     branch_sample_type: PerfBranchSampleType,
@@ -225,7 +225,7 @@ pub const PerfBranchSampleType = packed struct(u64) {
 /// PEBS configuration
 pub const PebsConfig = struct {
     enabled: bool = false,
-    precise_ip: u2 = 0,          // 0-3
+    precise_ip: u2 = 0, // 0-3
     pebs_buffer_size: u32 = 0,
     pebs_record_size: u32 = 0,
     counter_reset: [4]u64 = [_]u64{0} ** 4,
@@ -273,8 +273,8 @@ pub const IntelPtAddrCfg = struct {
 
 pub const IntelPtAddrFilter = enum(u8) {
     disabled = 0,
-    filter = 1,        // trace only in range
-    stop = 2,          // stop trace in range
+    filter = 1, // trace only in range
+    stop = 2, // stop trace in range
 };
 
 /// Intel PT capabilities
@@ -395,9 +395,9 @@ pub const BtsConfig = struct {
 /// HW breakpoint type
 pub const HwBpType = packed struct(u32) {
     empty: bool = false,
-    r: bool = false,      // read
-    w: bool = false,      // write
-    x: bool = false,      // execute
+    r: bool = false, // read
+    w: bool = false, // write
+    x: bool = false, // execute
     _padding: u28 = 0,
 };
 
@@ -415,15 +415,15 @@ pub const HwBreakpointDesc = struct {
     len: HwBpLen = .len_4,
     bp_type: HwBpType = .{},
     enabled: bool = false,
-    slot: u8 = 0,           // debug register slot (0-3 on x86)
-    cpu: i32 = -1,          // -1 for task-bound
+    slot: u8 = 0, // debug register slot (0-3 on x86)
+    cpu: i32 = -1, // -1 for task-bound
     task_pid: i32 = -1,
     hit_count: u64 = 0,
 };
 
 /// HW breakpoint limits per architecture
 pub const HwBpLimits = struct {
-    max_exec: u8 = 4,       // x86: DR0-DR3
+    max_exec: u8 = 4, // x86: DR0-DR3
     max_data: u8 = 4,
     max_total: u8 = 4,
     variable_length: bool = true,

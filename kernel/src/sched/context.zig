@@ -97,7 +97,7 @@ pub const CpuContext = extern struct {
 pub fn switchContext(old_ctx: *CpuContext, new_ctx: *const CpuContext) void {
     // Save callee-saved registers into old context
     asm volatile (
-        // Save callee-saved GPRs
+    // Save callee-saved GPRs
         \\mov %%rbx, 0(%[old])
         \\mov %%rbp, 8(%[old])
         \\mov %%r12, 16(%[old])
@@ -121,13 +121,11 @@ pub fn switchContext(old_ctx: *CpuContext, new_ctx: *const CpuContext) void {
 
         // Jump to the new thread's saved RIP
         \\jmp *56(%[new_ptr])
-
         \\.Lswitch_return:
         :
         : [old] "r" (old_ctx),
           [new_ptr] "r" (new_ctx),
-        : "rax", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10", "r11",
-          "memory", "cc"
+        : .{ .rax = true, .rcx = true, .rdx = true, .rsi = true, .rdi = true, .r8 = true, .r9 = true, .r10 = true, .r11 = true, .memory = true, .cc = true }
     );
 }
 
@@ -136,7 +134,7 @@ pub fn switchContext(old_ctx: *CpuContext, new_ctx: *const CpuContext) void {
 /// and for kernel thread startup.
 pub fn restoreContext(new_ctx: *const CpuContext) noreturn {
     asm volatile (
-        // Restore all callee-saved registers
+    // Restore all callee-saved registers
         \\mov 0(%[ctx]), %%rbx
         \\mov 8(%[ctx]), %%rbp
         \\mov 16(%[ctx]), %%r12
@@ -149,7 +147,7 @@ pub fn restoreContext(new_ctx: *const CpuContext) noreturn {
         \\jmp *56(%[ctx])
         :
         : [ctx] "r" (new_ctx),
-        : "memory"
+        : .{ .memory = true }
     );
     unreachable;
 }
@@ -190,7 +188,7 @@ pub fn saveFpuState(buffer: *align(16) [512]u8) void {
     asm volatile ("fxsave (%[buf])"
         :
         : [buf] "r" (ptr),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -200,7 +198,7 @@ pub fn restoreFpuState(buffer: *align(16) const [512]u8) void {
     asm volatile ("fxrstor (%[buf])"
         :
         : [buf] "r" (ptr),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -208,6 +206,5 @@ pub fn restoreFpuState(buffer: *align(16) const [512]u8) void {
 pub fn initFpu() void {
     asm volatile (
         \\fninit
-        ::: "memory"
-    );
+        ::: .{ .memory = true });
 }

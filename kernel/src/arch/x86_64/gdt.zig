@@ -25,7 +25,7 @@ pub const AccessFlags = struct {
     pub const TSS_BUSY: u8 = PRESENT | 0x0B;
 };
 
-/// GDT Granularity Flags  
+/// GDT Granularity Flags
 pub const GranularityFlags = struct {
     pub const GRANULARITY_4K: u8 = 1 << 7;
     pub const SIZE_32BIT: u8 = 1 << 6;
@@ -311,7 +311,7 @@ fn reloadSegments() void {
         \\1:
         :
         : [code_sel] "i" (@as(u64, SegmentSelector.KERNEL_CODE)),
-        : "rax"
+        : .{ .rax = true }
     );
 }
 

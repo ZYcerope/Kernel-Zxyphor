@@ -11,40 +11,40 @@ const std = @import("std");
 
 /// x87 FPU status word
 pub const FpuStatusWord = packed struct {
-    ie: bool = false,  // Invalid operation exception
-    de: bool = false,  // Denormalized operand exception
-    ze: bool = false,  // Zero-divide exception
-    oe: bool = false,  // Overflow exception
-    ue: bool = false,  // Underflow exception
-    pe: bool = false,  // Precision exception
-    sf: bool = false,  // Stack fault
-    es: bool = false,  // Error summary
-    c0: bool = false,  // Condition code 0
-    c1: bool = false,  // Condition code 1
-    c2: bool = false,  // Condition code 2
-    top: u3 = 0,       // Top of stack pointer
-    c3: bool = false,  // Condition code 3
-    b: bool = false,   // FPU busy
+    ie: bool = false, // Invalid operation exception
+    de: bool = false, // Denormalized operand exception
+    ze: bool = false, // Zero-divide exception
+    oe: bool = false, // Overflow exception
+    ue: bool = false, // Underflow exception
+    pe: bool = false, // Precision exception
+    sf: bool = false, // Stack fault
+    es: bool = false, // Error summary
+    c0: bool = false, // Condition code 0
+    c1: bool = false, // Condition code 1
+    c2: bool = false, // Condition code 2
+    top: u3 = 0, // Top of stack pointer
+    c3: bool = false, // Condition code 3
+    b: bool = false, // FPU busy
 };
 
 /// x87 FPU control word
 pub const FpuControlWord = packed struct {
-    im: bool = true,   // Invalid operation mask
-    dm: bool = true,   // Denormalized operand mask
-    zm: bool = true,   // Zero-divide mask
-    om: bool = true,   // Overflow mask
-    um: bool = true,   // Underflow mask
-    pm: bool = true,   // Precision mask
+    im: bool = true, // Invalid operation mask
+    dm: bool = true, // Denormalized operand mask
+    zm: bool = true, // Zero-divide mask
+    om: bool = true, // Overflow mask
+    um: bool = true, // Underflow mask
+    pm: bool = true, // Precision mask
     _reserved1: u2 = 0,
-    pc: u2 = 3,        // Precision control (3 = double-extended)
-    rc: u2 = 0,        // Rounding control
-    ic: bool = false,   // Infinity control (legacy)
+    pc: u2 = 3, // Precision control (3 = double-extended)
+    rc: u2 = 0, // Rounding control
+    ic: bool = false, // Infinity control (legacy)
     _reserved2: u3 = 0,
 };
 
 /// x87 tag word (2 bits per register)
 pub const X87TagWord = packed struct {
-    tag0: u2 = 3,  // 0=valid, 1=zero, 2=special, 3=empty
+    tag0: u2 = 3, // 0=valid, 1=zero, 2=special, 3=empty
     tag1: u2 = 3,
     tag2: u2 = 3,
     tag3: u2 = 3,
@@ -56,26 +56,26 @@ pub const X87TagWord = packed struct {
 
 /// Legacy FPU env (FLDENV/FSTENV)
 pub const FpuEnv = struct {
-    cwd: u16,          // Control word
-    swd: u16,          // Status word
-    twd: u16,          // Tag word
-    fip: u32,          // FPU IP offset
-    fcs: u16,          // FPU IP selector
-    foo: u32,          // FPU operand pointer offset
-    fos: u16,          // FPU operand pointer selector
+    cwd: u16, // Control word
+    swd: u16, // Status word
+    twd: u16, // Tag word
+    fip: u32, // FPU IP offset
+    fcs: u16, // FPU IP selector
+    foo: u32, // FPU operand pointer offset
+    fos: u16, // FPU operand pointer selector
 };
 
 /// FXSAVE area (512 bytes, 16-byte aligned)
 pub const FxsaveArea = extern struct {
-    cwd: u16,          // x87 control word
-    swd: u16,          // x87 status word
-    twd: u8,           // Abridged tag word
+    cwd: u16, // x87 control word
+    swd: u16, // x87 status word
+    twd: u8, // Abridged tag word
     _pad1: u8,
-    fop: u16,          // Last x87 opcode
-    rip: u64,          // x87 FPU instruction pointer
-    rdp: u64,          // x87 FPU data pointer
-    mxcsr: u32,        // MXCSR register
-    mxcsr_mask: u32,   // MXCSR mask
+    fop: u16, // Last x87 opcode
+    rip: u64, // x87 FPU instruction pointer
+    rdp: u64, // x87 FPU data pointer
+    mxcsr: u32, // MXCSR register
+    mxcsr_mask: u32, // MXCSR mask
     // ST registers (8 x 10 bytes = 80, padded to 8x16 = 128)
     st: [8][16]u8,
     // XMM registers (16 x 16 bytes = 256)
@@ -90,21 +90,21 @@ pub const FxsaveArea = extern struct {
 
 /// MXCSR register bits
 pub const MxcsrBits = packed struct {
-    ie: bool = false,   // Invalid operation exception
-    de: bool = false,   // Denormal exception
-    ze: bool = false,   // Divide-by-zero exception
-    oe: bool = false,   // Overflow exception
-    ue: bool = false,   // Underflow exception
-    pe: bool = false,   // Precision exception
-    daz: bool = false,  // Denormals are zeros
-    im: bool = true,    // Invalid operation mask
-    dm: bool = true,    // Denormal mask
-    zm: bool = true,    // Divide-by-zero mask
-    om: bool = true,    // Overflow mask
-    um: bool = true,    // Underflow mask
-    pm: bool = true,    // Precision mask
-    rc: u2 = 0,         // Rounding control
-    ftz: bool = false,  // Flush to zero
+    ie: bool = false, // Invalid operation exception
+    de: bool = false, // Denormal exception
+    ze: bool = false, // Divide-by-zero exception
+    oe: bool = false, // Overflow exception
+    ue: bool = false, // Underflow exception
+    pe: bool = false, // Precision exception
+    daz: bool = false, // Denormals are zeros
+    im: bool = true, // Invalid operation mask
+    dm: bool = true, // Denormal mask
+    zm: bool = true, // Divide-by-zero mask
+    om: bool = true, // Overflow mask
+    um: bool = true, // Underflow mask
+    pm: bool = true, // Precision mask
+    rc: u2 = 0, // Rounding control
+    ftz: bool = false, // Flush to zero
     _reserved: u16 = 0,
 };
 
@@ -122,60 +122,60 @@ pub const MxcsrRoundingControl = enum(u2) {
 
 /// XSAVE feature bits (CPUID EAX=0Dh,ECX=0)
 pub const XsaveFeature = packed struct {
-    x87: bool = true,       // Bit 0: x87 FPU state
-    sse: bool = true,       // Bit 1: SSE state (XMM)
-    avx: bool = false,      // Bit 2: AVX state (YMM upper)
-    bndreg: bool = false,   // Bit 3: MPX BNDREGS
-    bndcsr: bool = false,   // Bit 4: MPX BNDCSR
-    opmask: bool = false,   // Bit 5: AVX-512 opmask (k0-k7)
+    x87: bool = true, // Bit 0: x87 FPU state
+    sse: bool = true, // Bit 1: SSE state (XMM)
+    avx: bool = false, // Bit 2: AVX state (YMM upper)
+    bndreg: bool = false, // Bit 3: MPX BNDREGS
+    bndcsr: bool = false, // Bit 4: MPX BNDCSR
+    opmask: bool = false, // Bit 5: AVX-512 opmask (k0-k7)
     zmm_hi256: bool = false, // Bit 6: AVX-512 ZMM upper 256 (ZMM0-15 bits 256-511)
-    hi16_zmm: bool = false,  // Bit 7: AVX-512 HI16_ZMM (ZMM16-31)
-    pt: bool = false,       // Bit 8: Processor Trace
-    pkru: bool = false,     // Bit 9: PKRU state
-    pasid: bool = false,    // Bit 10: PASID state
-    cet_u: bool = false,    // Bit 11: CET user state
-    cet_s: bool = false,    // Bit 12: CET supervisor state
-    hdc: bool = false,      // Bit 13: HDC state
-    uintr: bool = false,    // Bit 14: UINTR state
-    lbr: bool = false,      // Bit 15: LBR state
-    hwp: bool = false,      // Bit 16: HWP state
+    hi16_zmm: bool = false, // Bit 7: AVX-512 HI16_ZMM (ZMM16-31)
+    pt: bool = false, // Bit 8: Processor Trace
+    pkru: bool = false, // Bit 9: PKRU state
+    pasid: bool = false, // Bit 10: PASID state
+    cet_u: bool = false, // Bit 11: CET user state
+    cet_s: bool = false, // Bit 12: CET supervisor state
+    hdc: bool = false, // Bit 13: HDC state
+    uintr: bool = false, // Bit 14: UINTR state
+    lbr: bool = false, // Bit 15: LBR state
+    hwp: bool = false, // Bit 16: HWP state
     amx_tilecfg: bool = false, // Bit 17: AMX TILECFG
     amx_tiledata: bool = false, // Bit 18: AMX TILEDATA
-    apx: bool = false,      // Bit 19: APX extended GPRs
+    apx: bool = false, // Bit 19: APX extended GPRs
     _reserved: u44 = 0,
 };
 
 /// XSAVE header (bytes 512-575 of XSAVE area)
 pub const XsaveHeader = extern struct {
-    xstate_bv: u64,    // Features currently saved
-    xcomp_bv: u64,     // Features using compacted format
+    xstate_bv: u64, // Features currently saved
+    xcomp_bv: u64, // Features using compacted format
     _reserved: [48]u8,
 };
 
 /// XSAVE area sizes per component
 pub const XsaveComponentInfo = struct {
-    feature: u8,       // Feature bit number
-    size: u32,         // Size in bytes
-    offset: u32,       // Offset from XSAVE base (standard format)
-    aligned: bool,     // Must be 64-byte aligned
-    supervisor: bool,  // Supervisor-only component
+    feature: u8, // Feature bit number
+    size: u32, // Size in bytes
+    offset: u32, // Offset from XSAVE base (standard format)
+    aligned: bool, // Must be 64-byte aligned
+    supervisor: bool, // Supervisor-only component
 };
 
 /// Known XSAVE component sizes
 pub const xsave_components = [_]XsaveComponentInfo{
-    .{ .feature = 0, .size = 160, .offset = 0, .aligned = false, .supervisor = false },       // x87
-    .{ .feature = 1, .size = 256, .offset = 160, .aligned = false, .supervisor = false },      // SSE
-    .{ .feature = 2, .size = 256, .offset = 576, .aligned = false, .supervisor = false },      // AVX
-    .{ .feature = 3, .size = 64, .offset = 960, .aligned = false, .supervisor = false },       // MPX BNDREGS
-    .{ .feature = 4, .size = 64, .offset = 1024, .aligned = false, .supervisor = false },      // MPX BNDCSR
-    .{ .feature = 5, .size = 64, .offset = 0, .aligned = true, .supervisor = false },          // AVX-512 opmask
-    .{ .feature = 6, .size = 512, .offset = 0, .aligned = true, .supervisor = false },         // AVX-512 ZMM_Hi256
-    .{ .feature = 7, .size = 1024, .offset = 0, .aligned = true, .supervisor = false },        // AVX-512 Hi16_ZMM
-    .{ .feature = 9, .size = 8, .offset = 0, .aligned = false, .supervisor = false },          // PKRU
-    .{ .feature = 11, .size = 16, .offset = 0, .aligned = false, .supervisor = true },         // CET_U
-    .{ .feature = 12, .size = 24, .offset = 0, .aligned = false, .supervisor = true },         // CET_S
-    .{ .feature = 17, .size = 64, .offset = 0, .aligned = true, .supervisor = false },         // AMX TILECFG
-    .{ .feature = 18, .size = 8192, .offset = 0, .aligned = true, .supervisor = false },       // AMX TILEDATA
+    .{ .feature = 0, .size = 160, .offset = 0, .aligned = false, .supervisor = false }, // x87
+    .{ .feature = 1, .size = 256, .offset = 160, .aligned = false, .supervisor = false }, // SSE
+    .{ .feature = 2, .size = 256, .offset = 576, .aligned = false, .supervisor = false }, // AVX
+    .{ .feature = 3, .size = 64, .offset = 960, .aligned = false, .supervisor = false }, // MPX BNDREGS
+    .{ .feature = 4, .size = 64, .offset = 1024, .aligned = false, .supervisor = false }, // MPX BNDCSR
+    .{ .feature = 5, .size = 64, .offset = 0, .aligned = true, .supervisor = false }, // AVX-512 opmask
+    .{ .feature = 6, .size = 512, .offset = 0, .aligned = true, .supervisor = false }, // AVX-512 ZMM_Hi256
+    .{ .feature = 7, .size = 1024, .offset = 0, .aligned = true, .supervisor = false }, // AVX-512 Hi16_ZMM
+    .{ .feature = 9, .size = 8, .offset = 0, .aligned = false, .supervisor = false }, // PKRU
+    .{ .feature = 11, .size = 16, .offset = 0, .aligned = false, .supervisor = true }, // CET_U
+    .{ .feature = 12, .size = 24, .offset = 0, .aligned = false, .supervisor = true }, // CET_S
+    .{ .feature = 17, .size = 64, .offset = 0, .aligned = true, .supervisor = false }, // AMX TILECFG
+    .{ .feature = 18, .size = 8192, .offset = 0, .aligned = true, .supervisor = false }, // AMX TILEDATA
 };
 
 /// XSAVE area (dynamic size based on features)
@@ -237,7 +237,7 @@ pub const AmxTilecfg = extern struct {
     _reserved0: [14]u8,
     colsb: [16]u16, // Columns in bytes for each tile
     _reserved1: [16]u16,
-    rows: [16]u8,    // Rows for each tile
+    rows: [16]u8, // Rows for each tile
     _reserved2: [16]u8,
 };
 
@@ -260,11 +260,11 @@ pub const AMX_TILE_SIZE: usize = 8192;
 
 /// CET shadow stack state
 pub const CetShadowStackState = struct {
-    ssp: u64,              // Shadow stack pointer
-    pl0_ssp: u64,          // PL0 SSP
+    ssp: u64, // Shadow stack pointer
+    pl0_ssp: u64, // PL0 SSP
     pl1_ssp: u64,
     pl2_ssp: u64,
-    isst_addr: u64,        // Interrupt shadow stack table address
+    isst_addr: u64, // Interrupt shadow stack table address
 };
 
 /// CET IBT (Indirect Branch Tracking) state
@@ -330,11 +330,11 @@ pub const PkruKeyBits = packed struct {
 
 /// FPU state type
 pub const FpuStateType = enum(u8) {
-    legacy_fxsave = 0,  // FXSAVE/FXRSTOR only
-    xsave = 1,          // XSAVE/XRSTOR
-    xsaveopt = 2,       // XSAVEOPT
-    xsavec = 3,         // XSAVEC (compacted)
-    xsaves = 4,         // XSAVES (supervisor)
+    legacy_fxsave = 0, // FXSAVE/FXRSTOR only
+    xsave = 1, // XSAVE/XRSTOR
+    xsaveopt = 2, // XSAVEOPT
+    xsavec = 3, // XSAVEC (compacted)
+    xsaves = 4, // XSAVES (supervisor)
 };
 
 /// Per-thread FPU state
@@ -344,15 +344,15 @@ pub const FpuState = struct {
     state_type: FpuStateType,
 
     // Feature tracking
-    xfeatures_active: u64,  // Features currently in use
-    xfeatures_perm: u64,    // Features permitted for this thread
+    xfeatures_active: u64, // Features currently in use
+    xfeatures_perm: u64, // Features permitted for this thread
 
     // Status
-    initialized: bool,      // Has used FPU since exec
-    last_cpu: i32,          // Last CPU this ran on (-1 = none)
+    initialized: bool, // Has used FPU since exec
+    last_cpu: i32, // Last CPU this ran on (-1 = none)
 
     // Lazy switching
-    fpregs_active: bool,    // FPU regs are live (not saved)
+    fpregs_active: bool, // FPU regs are live (not saved)
 
     // PKRU
     pkru: u32,
@@ -383,8 +383,8 @@ pub const FpuInitMode = enum(u8) {
 /// Kernel FPU begin/end for kernel FPU usage
 pub const KernelFpuState = struct {
     saved: bool,
-    mask: u64,       // Which features were saved
-    nesting: u32,    // Nesting depth
+    mask: u64, // Which features were saved
+    nesting: u32, // Nesting depth
 };
 
 // ============================================================================
@@ -427,9 +427,9 @@ pub const SignalFpuValidation = struct {
 
 /// UINTR state
 pub const UintrState = struct {
-    handler: u64,      // User interrupt handler RIP
+    handler: u64, // User interrupt handler RIP
     stack_adjust: u64, // Stack adjustment
-    uitt_addr: u64,    // User interrupt target table address
+    uitt_addr: u64, // User interrupt target table address
     uitt_size: u32,
     misc_enable: u64,
     // Status
@@ -457,7 +457,7 @@ pub const UintrTTE = extern struct {
 pub const FpuFeatureDetection = struct {
     // Basic
     has_fpu: bool,
-    has_fxsr: bool,     // FXSAVE/FXRSTOR
+    has_fxsr: bool, // FXSAVE/FXRSTOR
     has_sse: bool,
     has_sse2: bool,
     has_sse3: bool,
@@ -525,9 +525,9 @@ pub const FpuSubsystem = struct {
     xfeatures_mask_supervisor: u64,
     xfeatures_mask_independent: u64,
     // Dynamic permission
-    dynamic_xfeatures: u64,  // Features requiring dynamic permission (e.g., AMX)
+    dynamic_xfeatures: u64, // Features requiring dynamic permission (e.g., AMX)
     // Legacy
-    cr0_ts_used: bool,       // Using CR0.TS lazy switching (not for modern)
+    cr0_ts_used: bool, // Using CR0.TS lazy switching (not for modern)
     // MXCSR
     mxcsr_feature_mask: u32,
     // Stats

@@ -17,15 +17,15 @@ pub const X2APIC_MSR_BASE: u32 = 0x800;
 pub const ApicReg = enum(u32) {
     id = 0x020,
     version = 0x030,
-    tpr = 0x080,       // Task Priority Register
-    apr = 0x090,       // Arbitration Priority Register
-    ppr = 0x0A0,       // Processor Priority Register
-    eoi = 0x0B0,       // End Of Interrupt
-    rrd = 0x0C0,       // Remote Read Register
-    ldr = 0x0D0,       // Logical Destination Register
-    dfr = 0x0E0,       // Destination Format Register
-    svr = 0x0F0,       // Spurious Interrupt Vector Register
-    isr_0 = 0x100,     // In-Service Register (8 regs)
+    tpr = 0x080, // Task Priority Register
+    apr = 0x090, // Arbitration Priority Register
+    ppr = 0x0A0, // Processor Priority Register
+    eoi = 0x0B0, // End Of Interrupt
+    rrd = 0x0C0, // Remote Read Register
+    ldr = 0x0D0, // Logical Destination Register
+    dfr = 0x0E0, // Destination Format Register
+    svr = 0x0F0, // Spurious Interrupt Vector Register
+    isr_0 = 0x100, // In-Service Register (8 regs)
     isr_1 = 0x110,
     isr_2 = 0x120,
     isr_3 = 0x130,
@@ -33,7 +33,7 @@ pub const ApicReg = enum(u32) {
     isr_5 = 0x150,
     isr_6 = 0x160,
     isr_7 = 0x170,
-    tmr_0 = 0x180,     // Trigger Mode Register (8 regs)
+    tmr_0 = 0x180, // Trigger Mode Register (8 regs)
     tmr_1 = 0x190,
     tmr_2 = 0x1A0,
     tmr_3 = 0x1B0,
@@ -41,7 +41,7 @@ pub const ApicReg = enum(u32) {
     tmr_5 = 0x1D0,
     tmr_6 = 0x1E0,
     tmr_7 = 0x1F0,
-    irr_0 = 0x200,     // Interrupt Request Register (8 regs)
+    irr_0 = 0x200, // Interrupt Request Register (8 regs)
     irr_1 = 0x210,
     irr_2 = 0x220,
     irr_3 = 0x230,
@@ -49,20 +49,20 @@ pub const ApicReg = enum(u32) {
     irr_5 = 0x250,
     irr_6 = 0x260,
     irr_7 = 0x270,
-    esr = 0x280,        // Error Status Register
-    lvt_cmci = 0x2F0,   // LVT Corrected Machine Check Interrupt
-    icr_lo = 0x300,      // Interrupt Command Register (low)
-    icr_hi = 0x310,      // Interrupt Command Register (high)
+    esr = 0x280, // Error Status Register
+    lvt_cmci = 0x2F0, // LVT Corrected Machine Check Interrupt
+    icr_lo = 0x300, // Interrupt Command Register (low)
+    icr_hi = 0x310, // Interrupt Command Register (high)
     lvt_timer = 0x320,
     lvt_thermal = 0x330,
     lvt_perf = 0x340,
     lvt_lint0 = 0x350,
     lvt_lint1 = 0x360,
     lvt_error = 0x370,
-    timer_icr = 0x380,   // Timer Initial Count
-    timer_ccr = 0x390,   // Timer Current Count
-    timer_dcr = 0x3E0,   // Timer Divide Configuration
-    self_ipi = 0x3F0,    // x2APIC Self IPI
+    timer_icr = 0x380, // Timer Initial Count
+    timer_ccr = 0x390, // Timer Current Count
+    timer_dcr = 0x3E0, // Timer Divide Configuration
+    self_ipi = 0x3F0, // x2APIC Self IPI
 };
 
 // ============================================================================
@@ -157,7 +157,7 @@ pub const IoApicReg = enum(u32) {
     id = 0x00,
     version = 0x01,
     arb = 0x02,
-    redtbl_base = 0x10,  // Each entry is 2 regs (low+high)
+    redtbl_base = 0x10, // Each entry is 2 regs (low+high)
 };
 
 pub const IoApicRedirEntry = packed struct {
@@ -254,7 +254,7 @@ pub const MsiAddress = packed struct {
     redirect_hint: u1,
     _reserved2: u8 = 0,
     destination_id: u8,
-    base_address: u12 = 0xFEE,  // 0xFEE00000 >> 20
+    base_address: u12 = 0xFEE, // 0xFEE00000 >> 20
 };
 
 pub const MsiData = packed struct {
@@ -271,7 +271,7 @@ pub const MsiEntry = struct {
     address_hi: u32,
     data: u32,
     // MSI-X table entry
-    vector_control: u32,  // bit 0 = mask
+    vector_control: u32, // bit 0 = mask
     // Tracking
     irq: u32,
     cpu_affinity: u64,
@@ -343,13 +343,13 @@ pub const IrqDesc = struct {
     irq: u32,
     irq_type: IrqType,
     action: ?*IrqAction,
-    depth: u32,        // Disable depth
+    depth: u32, // Disable depth
     wake_depth: u32,
     irq_count: u64,
     irqs_unhandled: u64,
     last_unhandled: u64,
     // Affinity
-    affinity_hint: u64,  // CPU bitmask
+    affinity_hint: u64, // CPU bitmask
     effective_affinity: u64,
     pending_mask: u64,
     // State
@@ -357,7 +357,7 @@ pub const IrqDesc = struct {
     core_internal_state__do_not_mess_with_it: u32,
     name: [32]u8,
     // Per-CPU counts
-    kstat_irqs: [256]u64,  // per-CPU
+    kstat_irqs: [256]u64, // per-CPU
 };
 
 pub const IrqDomainType = enum(u8) {
@@ -404,7 +404,7 @@ pub const IpiType = enum(u8) {
 pub const IPI_VECTORS_START: u8 = 0xE0;
 
 pub const IpiStats = struct {
-    sent: [16]u64,       // per IPI type
+    sent: [16]u64, // per IPI type
     received: [16]u64,
     total_sent: u64,
     total_received: u64,
@@ -427,7 +427,7 @@ pub const NmiType = enum(u8) {
 };
 
 pub const NmiStats = struct {
-    count: [8]u64,       // per type
+    count: [8]u64, // per type
     unknown_count: u64,
     swallow_count: u64,
     total: u64,
@@ -439,14 +439,14 @@ pub const NmiStats = struct {
 
 pub const IntRemapType = enum(u8) {
     none = 0,
-    intel_ir = 1,     // Intel VT-d Interrupt Remapping
-    amd_ir = 2,       // AMD IOMMU Interrupt Remapping
+    intel_ir = 1, // Intel VT-d Interrupt Remapping
+    amd_ir = 2, // AMD IOMMU Interrupt Remapping
 };
 
 pub const IntrRemapEntry = struct {
     // Intel IRTE (Interrupt Remapping Table Entry)
     present: bool,
-    fpd: bool,         // Fault Processing Disable
+    fpd: bool, // Fault Processing Disable
     dest_mode: ApicDestMode,
     redir_hint: bool,
     trigger_mode: ApicTriggerMode,
@@ -454,9 +454,9 @@ pub const IntrRemapEntry = struct {
     avail: u4,
     vector: u8,
     destination_id: u32,
-    sid: u16,          // Source ID
-    sq: u2,            // Source ID qualifier
-    svt: u2,           // Source Validation Type
+    sid: u16, // Source ID
+    sq: u2, // Source ID qualifier
+    svt: u2, // Source Validation Type
     // Posted Interrupts
     posted: bool,
     urgent: bool,
@@ -477,7 +477,7 @@ pub const IntrRemapTable = struct {
 // ============================================================================
 
 pub const PostedInterruptDesc = struct {
-    pir: [4]u64,           // Posted Interrupt Requests (256 bits)
+    pir: [4]u64, // Posted Interrupt Requests (256 bits)
     outstanding: bool,
     suppress: bool,
     notification_vector: u8,
@@ -567,7 +567,7 @@ pub const ApicSubsystem = struct {
     local_apic_version: u32,
     local_apic_base: u64,
     local_apic_enabled: bool,
-    bsp: bool,  // Bootstrap Processor
+    bsp: bool, // Bootstrap Processor
     // x2APIC
     x2apic: X2ApicState,
     // IO-APICs

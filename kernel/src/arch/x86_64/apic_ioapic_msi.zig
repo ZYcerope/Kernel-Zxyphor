@@ -119,14 +119,14 @@ pub const ApicTimerDivide = enum(u32) {
 
 pub const IcrLow = packed struct(u32) {
     vector: u8,
-    delivery_mode: u3,    // Fixed/Lowest/SMI/NMI/INIT/StartUp
-    dest_mode: u1,        // 0=Physical, 1=Logical
+    delivery_mode: u3, // Fixed/Lowest/SMI/NMI/INIT/StartUp
+    dest_mode: u1, // 0=Physical, 1=Logical
     delivery_status: u1,
     _reserved1: u1,
-    level: u1,            // 0=De-assert, 1=Assert
-    trigger_mode: u1,     // 0=Edge, 1=Level
+    level: u1, // 0=De-assert, 1=Assert
+    trigger_mode: u1, // 0=Edge, 1=Level
     _reserved2: u2,
-    dest_shorthand: u2,   // 0=None, 1=Self, 2=All-incl-self, 3=All-excl-self
+    dest_shorthand: u2, // 0=None, 1=Self, 2=All-incl-self, 3=All-excl-self
     _reserved3: u12,
 };
 
@@ -247,11 +247,11 @@ pub const IoapicVersion = packed struct(u32) {
 pub const IoapicRedEntry = packed struct(u64) {
     vector: u8,
     delivery_mode: u3,
-    dest_mode: u1,        // 0=Physical, 1=Logical
+    dest_mode: u1, // 0=Physical, 1=Logical
     delivery_status: u1,
-    pin_polarity: u1,     // 0=Active-high, 1=Active-low
+    pin_polarity: u1, // 0=Active-high, 1=Active-low
     remote_irr: u1,
-    trigger_mode: u1,     // 0=Edge, 1=Level
+    trigger_mode: u1, // 0=Edge, 1=Level
     mask: u1,
     _reserved: u39,
     destination: u8,
@@ -279,7 +279,7 @@ pub const IrteFormat = enum(u8) {
 
 pub const IntelIrte = packed struct(u128) {
     present: bool,
-    fpd: bool,            // Fault Processing Disable
+    fpd: bool, // Fault Processing Disable
     dest_mode: u1,
     redir_hint: u1,
     trigger_mode: u1,
@@ -294,7 +294,7 @@ pub const IntelIrte = packed struct(u128) {
     source_id_qualifier: u2,
     source_validation_type: u2,
     _reserved4: u12,
-    posted_interrupt_descriptor: u46,   // Physical address >> 6
+    posted_interrupt_descriptor: u46, // Physical address >> 6
     _reserved5: u2,
 };
 
@@ -329,11 +329,11 @@ pub const IntrRemapConfig = struct {
 
 pub const MsiAddress = packed struct(u32) {
     _reserved1: u2,
-    dest_mode_logical: bool,    // DM bit
-    redirection_hint: bool,     // RH bit
+    dest_mode_logical: bool, // DM bit
+    redirection_hint: bool, // RH bit
     _reserved2: u8,
     destination_id: u8,
-    fixed_prefix: u12,          // Must be 0xFEE
+    fixed_prefix: u12, // Must be 0xFEE
 };
 
 pub const MsiData = packed struct(u32) {
@@ -341,7 +341,7 @@ pub const MsiData = packed struct(u32) {
     delivery_mode: u3,
     _reserved1: u3,
     level: u1,
-    trigger_mode: u1,          // 0=Edge, 1=Level
+    trigger_mode: u1, // 0=Edge, 1=Level
     _reserved2: u16,
 };
 
@@ -355,7 +355,7 @@ pub const MsixEntry = struct {
     msg_addr_lo: u32,
     msg_addr_hi: u32,
     msg_data: u32,
-    vector_control: u32,       // Bit 0 = mask
+    vector_control: u32, // Bit 0 = mask
 };
 
 pub const MsiDesc = struct {
@@ -374,7 +374,7 @@ pub const MsiDesc = struct {
 };
 
 pub const PciMsiCap = packed struct(u32) {
-    cap_id: u8,             // 0x05
+    cap_id: u8, // 0x05
     next_ptr: u8,
     msi_enable: bool,
     multiple_message_capable: u3,
@@ -387,7 +387,7 @@ pub const PciMsiCap = packed struct(u32) {
 };
 
 pub const PciMsixCap = packed struct(u32) {
-    cap_id: u8,             // 0x11
+    cap_id: u8, // 0x11
     next_ptr: u8,
     msix_enable: bool,
     function_mask: bool,

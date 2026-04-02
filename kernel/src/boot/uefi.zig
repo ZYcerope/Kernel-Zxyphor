@@ -230,8 +230,8 @@ pub const FramebufferInfo = struct {
     size: u64 = 0,
     width: u32 = 0,
     height: u32 = 0,
-    stride: u32 = 0,         // Pixels per scan line
-    bpp: u8 = 32,            // Bits per pixel
+    stride: u32 = 0, // Pixels per scan line
+    bpp: u8 = 32, // Bits per pixel
     pixel_format: EfiPixelFormat = .PixelBlueGreenRedReserved8BitPerColor,
     red_mask: u32 = 0x00FF0000,
     green_mask: u32 = 0x0000FF00,
@@ -275,7 +275,7 @@ pub const EfiConfigurationTable = extern struct {
 // ============================================================================
 
 pub const AcpiRsdp = extern struct {
-    signature: [8]u8,        // "RSD PTR "
+    signature: [8]u8, // "RSD PTR "
     checksum: u8,
     oem_id: [6]u8,
     revision: u8,
@@ -288,7 +288,7 @@ pub const AcpiRsdp = extern struct {
 
     pub fn validate(self: *const AcpiRsdp) bool {
         if (!std.mem.eql(u8, &self.signature, "RSD PTR ")) return false;
-        
+
         // Validate checksum (first 20 bytes for ACPI 1.0)
         var sum: u8 = 0;
         const bytes = @as([*]const u8, @ptrCast(self));

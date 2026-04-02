@@ -16,7 +16,7 @@ const std = @import("std");
 pub const EarlyConType = enum(u8) {
     uart_8250 = 0,
     uart_pl011 = 1,
-    uart_sbi = 2,        // RISC-V SBI
+    uart_sbi = 2, // RISC-V SBI
     vga_text = 3,
     efifb = 4,
     serial_io = 5,
@@ -33,14 +33,14 @@ pub const EarlyConDesc = struct {
     con_type: EarlyConType = .uart_8250,
     base_addr: u64 = 0,
     reg_shift: u8 = 0,
-    reg_width: u8 = 1,        // bytes per register
+    reg_width: u8 = 1, // bytes per register
     io_type: EarlyConIoType = .mmio,
     baudrate: u32 = 115200,
     data_bits: u8 = 8,
     stop_bits: u8 = 1,
     parity: EarlyConParity = .none,
     fifo_size: u32 = 16,
-    index: i32 = -1,          // serial port index
+    index: i32 = -1, // serial port index
     options: [32]u8 = [_]u8{0} ** 32,
     options_len: u8 = 0,
     active: bool = false,
@@ -66,8 +66,8 @@ pub const EarlyConParity = enum(u8) {
 
 /// SMBIOS entry point type
 pub const SmbiosEntryType = enum(u8) {
-    smbios_21 = 0,    // 2.1 (32-bit)
-    smbios_30 = 1,    // 3.0 (64-bit)
+    smbios_21 = 0, // 2.1 (32-bit)
+    smbios_30 = 1, // 3.0 (64-bit)
 };
 
 /// SMBIOS structure types
@@ -176,7 +176,7 @@ pub const SmbiosMemDevice = struct {
     error_info_handle: u16 = 0,
     total_width: u16 = 0,
     data_width: u16 = 0,
-    size_mb: u32 = 0,         // size in MB (extended for > 32GB)
+    size_mb: u32 = 0, // size in MB (extended for > 32GB)
     form_factor: u8 = 0,
     device_set: u8 = 0,
     device_locator: [32]u8 = [_]u8{0} ** 32,
@@ -205,28 +205,28 @@ pub const SmbiosMemDevice = struct {
 
 /// ACPI table signature
 pub const AcpiTableSig = enum(u32) {
-    rsdp = 0x50445352,   // "RSDP"
-    rsdt = 0x54445352,   // "RSDT"
-    xsdt = 0x54445358,   // "XSDT"
-    fadt = 0x50434146,   // "FACP"
-    madt = 0x43495041,   // "APIC"
-    mcfg = 0x4746434D,   // "MCFG"
-    hpet = 0x54455048,   // "HPET"
-    srat = 0x54415253,   // "SRAT"
-    slit = 0x54494C53,   // "SLIT"
-    dsdt = 0x54445344,   // "DSDT"
-    ssdt = 0x54445353,   // "SSDT"
-    bgrt = 0x54524742,   // "BGRT"
-    fpdt = 0x54445046,   // "FPDT"
-    bert = 0x54524542,   // "BERT"
-    erst = 0x54535245,   // "ERST"
-    hest = 0x54534548,   // "HEST"
-    einj = 0x4A4E4945,   // "EINJ"
-    dmar = 0x52414D44,   // "DMAR"
-    ivrs = 0x53525649,   // "IVRS"
-    pptt = 0x54545050,   // "PPTT"
-    nfit = 0x5449464E,   // "NFIT"
-    cedt = 0x54444543,   // "CEDT"
+    rsdp = 0x50445352, // "RSDP"
+    rsdt = 0x54445352, // "RSDT"
+    xsdt = 0x54445358, // "XSDT"
+    fadt = 0x50434146, // "FACP"
+    madt = 0x43495041, // "APIC"
+    mcfg = 0x4746434D, // "MCFG"
+    hpet = 0x54455048, // "HPET"
+    srat = 0x54415253, // "SRAT"
+    slit = 0x54494C53, // "SLIT"
+    dsdt = 0x54445344, // "DSDT"
+    ssdt = 0x54445353, // "SSDT"
+    bgrt = 0x54524742, // "BGRT"
+    fpdt = 0x54445046, // "FPDT"
+    bert = 0x54524542, // "BERT"
+    erst = 0x54535245, // "ERST"
+    hest = 0x54534548, // "HEST"
+    einj = 0x4A4E4945, // "EINJ"
+    dmar = 0x52414D44, // "DMAR"
+    ivrs = 0x53525649, // "IVRS"
+    pptt = 0x54545050, // "PPTT"
+    nfit = 0x5449464E, // "NFIT"
+    cedt = 0x54444543, // "CEDT"
     // Zxyphor
 };
 
@@ -318,8 +318,8 @@ pub const CmdlineBuffer = struct {
 /// initrd type
 pub const InitrdType = enum(u8) {
     none = 0,
-    initrd = 1,         // legacy initrd (block device)
-    initramfs = 2,      // cpio archive
+    initrd = 1, // legacy initrd (block device)
+    initramfs = 2, // cpio archive
 };
 
 /// initrd compression
@@ -417,13 +417,13 @@ pub const SecureBootState = enum(u8) {
 
 /// Secure boot key database
 pub const SecureBootKeyDb = enum(u8) {
-    pk = 0,           // Platform Key
-    kek = 1,          // Key Exchange Key
-    db = 2,           // Signature Database
-    dbx = 3,          // Forbidden Signatures
-    dbt = 4,          // Timestamp Signatures
-    dbr = 5,          // Recovery Signatures
-    mok = 6,          // Machine Owner Key (MOK)
+    pk = 0, // Platform Key
+    kek = 1, // Key Exchange Key
+    db = 2, // Signature Database
+    dbx = 3, // Forbidden Signatures
+    dbt = 4, // Timestamp Signatures
+    dbr = 5, // Recovery Signatures
+    mok = 6, // Machine Owner Key (MOK)
 };
 
 /// Secure boot validation result

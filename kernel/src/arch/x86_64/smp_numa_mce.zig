@@ -15,11 +15,11 @@ pub const E820Type = enum(u32) {
     ram = 1,
     reserved = 2,
     acpi = 3,
-    nvs = 4,            // ACPI NVS (Non-Volatile Storage)
+    nvs = 4, // ACPI NVS (Non-Volatile Storage)
     unusable = 5,
-    disabled = 6,        // Persistent memory disabled
-    pmem = 7,            // Persistent memory
-    pram = 12,           // Protected RAM
+    disabled = 6, // Persistent memory disabled
+    pmem = 7, // Persistent memory
+    pram = 12, // Protected RAM
     soft_reserved = 0xEFFFFFFD,
     // Zxyphor
     zxy_secure = 0xF0000001,
@@ -107,7 +107,7 @@ pub const MadtEntryType = enum(u8) {
 pub const MadtLocalApic = struct {
     acpi_processor_uid: u8,
     apic_id: u8,
-    flags: u32,          // Bit 0: enabled, Bit 1: online capable
+    flags: u32, // Bit 0: enabled, Bit 1: online capable
 
     pub fn is_enabled(self: *const MadtLocalApic) bool {
         return (self.flags & 1) != 0;
@@ -134,7 +134,7 @@ pub const MadtInterruptOverride = struct {
     bus: u8,
     source: u8,
     gsi: u32,
-    flags: u16,          // Polarity (bits 0-1), Trigger (bits 2-3)
+    flags: u16, // Polarity (bits 0-1), Trigger (bits 2-3)
 };
 
 // ============================================================================
@@ -186,14 +186,14 @@ pub const CpuTopology = struct {
     die_id: u32,
     package_id: u32,
     // SMT
-    smt_id: u32,              // Thread ID within core
+    smt_id: u32, // Thread ID within core
     // Cluster
     cluster_id: u32,
     // NUMA
     numa_node: u32,
     // Cache
-    llc_id: u32,               // Last level cache ID
-    l2c_id: u32,               // L2 cache ID
+    llc_id: u32, // Last level cache ID
+    l2c_id: u32, // L2 cache ID
     // Capabilities
     has_x2apic: bool,
     // Performance
@@ -205,7 +205,7 @@ pub const CpuTopology = struct {
 
 pub const SmpBootParams = struct {
     // Trampoline
-    trampoline_phys: u64,       // Physical address of AP trampoline code
+    trampoline_phys: u64, // Physical address of AP trampoline code
     trampoline_size: u32,
     // AP startup
     ap_startup_addr: u64,
@@ -242,7 +242,7 @@ pub const NumaNodeState = enum(u8) {
 pub const NumaNode = struct {
     node_id: u32,
     // State
-    state: u8,           // Bitmask of NumaNodeState
+    state: u8, // Bitmask of NumaNodeState
     // Memory ranges
     start_pfn: u64,
     end_pfn: u64,
@@ -253,7 +253,7 @@ pub const NumaNode = struct {
     zone_dma32_pages: u64,
     zone_movable_pages: u64,
     // CPUs
-    cpu_mask: [4]u64,    // Up to 256 CPUs
+    cpu_mask: [4]u64, // Up to 256 CPUs
     nr_cpus: u32,
     // Distances
     distances: [MAX_NUMA_NODES]u8,
@@ -293,7 +293,7 @@ pub const NumaNode = struct {
     }
 
     pub fn is_local_distance(distance: u8) bool {
-        return distance == 10;  // Standard local distance
+        return distance == 10; // Standard local distance
     }
 
     pub fn memory_mb(self: *const NumaNode) u64 {
@@ -315,8 +315,8 @@ pub const NumaMemoryTarget = struct {
 pub const NumaMemType = enum(u8) {
     dram = 0,
     nvdimm = 1,
-    hbm = 2,            // High Bandwidth Memory
-    cxl_memory = 3,     // CXL attached memory
+    hbm = 2, // High Bandwidth Memory
+    cxl_memory = 3, // CXL attached memory
     pmem = 4,
     // Zxyphor
     zxy_tiered = 10,
@@ -384,7 +384,7 @@ pub const HmatEntry = struct {
     data_type: HmatDataType,
     // Value
     entry_base_unit: u64,
-    value: u16,          // Relative to base unit
+    value: u16, // Relative to base unit
     // Computed
     latency_ns: u32,
     bandwidth_mbps: u32,
@@ -409,18 +409,18 @@ pub const MceBank = struct {
 };
 
 pub const MceStatus = packed struct(u64) {
-    mca_error: u16 = 0,     // Error code
+    mca_error: u16 = 0, // Error code
     model_specific: u16 = 0, // Model-specific error
     other_info: u6 = 0,
     corrected_count: u15 = 0, // Corrected error count (ThresHold)
     _reserved1: u4 = 0,
-    pcc: bool = false,       // Processor context corrupted
-    addrv: bool = false,     // MCi_ADDR valid
-    miscv: bool = false,     // MCi_MISC valid
-    en: bool = false,        // Error enabled
-    uc: bool = false,        // Uncorrected error
-    overflow: bool = false,  // Error overflow
-    val: bool = false,       // MCi_STATUS valid
+    pcc: bool = false, // Processor context corrupted
+    addrv: bool = false, // MCi_ADDR valid
+    miscv: bool = false, // MCi_MISC valid
+    en: bool = false, // Error enabled
+    uc: bool = false, // Uncorrected error
+    overflow: bool = false, // Error overflow
+    val: bool = false, // MCi_STATUS valid
 
     pub fn is_valid(self: MceStatus) bool {
         return self.val;
@@ -546,7 +546,7 @@ pub const RasEvent = struct {
     grain_bits: u8,
     syndrome: u64,
     // PCIe specific
-    pcie_bdf: u32,       // Bus:Dev:Function
+    pcie_bdf: u32, // Bus:Dev:Function
     // Description
     message: [256]u8,
     message_len: u16,
@@ -561,8 +561,8 @@ pub const RasStats = struct {
     uncorrectable_mce: u64,
     fatal_mce: u64,
     // Memory (EDAC)
-    ce_count: u64,       // Correctable errors
-    ue_count: u64,       // Uncorrectable errors
+    ce_count: u64, // Correctable errors
+    ue_count: u64, // Uncorrectable errors
     // PCIe AER
     pcie_correctable: u64,
     pcie_uncorrectable: u64,

@@ -47,29 +47,29 @@ pub const DMAR_IQA_REG: u64 = 0x90;
 pub const DMAR_IRTA_REG: u64 = 0xB8;
 
 // GCMD bits
-pub const GCMD_TE: u32 = 1 << 31;     // Translation Enable
-pub const GCMD_SRTP: u32 = 1 << 30;   // Set Root Table Pointer
-pub const GCMD_SFL: u32 = 1 << 29;    // Set Fault Log
-pub const GCMD_EAFL: u32 = 1 << 28;   // Enable Advanced Fault Logging
-pub const GCMD_WBF: u32 = 1 << 27;    // Write Buffer Flush
-pub const GCMD_QIE: u32 = 1 << 26;    // Queued Invalidation Enable
-pub const GCMD_IRE: u32 = 1 << 25;    // Interrupt Remapping Enable
-pub const GCMD_SIRTP: u32 = 1 << 24;  // Set Interrupt Remap Table Pointer
+pub const GCMD_TE: u32 = 1 << 31; // Translation Enable
+pub const GCMD_SRTP: u32 = 1 << 30; // Set Root Table Pointer
+pub const GCMD_SFL: u32 = 1 << 29; // Set Fault Log
+pub const GCMD_EAFL: u32 = 1 << 28; // Enable Advanced Fault Logging
+pub const GCMD_WBF: u32 = 1 << 27; // Write Buffer Flush
+pub const GCMD_QIE: u32 = 1 << 26; // Queued Invalidation Enable
+pub const GCMD_IRE: u32 = 1 << 25; // Interrupt Remapping Enable
+pub const GCMD_SIRTP: u32 = 1 << 24; // Set Interrupt Remap Table Pointer
 
 // CAP bits
-pub const CAP_SAGAW_MASK: u64 = 0x1F << 8;  // Supported Adjusted Guest Address Widths
+pub const CAP_SAGAW_MASK: u64 = 0x1F << 8; // Supported Adjusted Guest Address Widths
 pub const CAP_NUM_DOMAINS_MASK: u64 = 0x7;
-pub const CAP_CM: u64 = 1 << 7;              // Caching Mode
-pub const CAP_PI: u64 = 1 << 59;             // Posted Interrupts
+pub const CAP_CM: u64 = 1 << 7; // Caching Mode
+pub const CAP_PI: u64 = 1 << 59; // Posted Interrupts
 
 // Page table entry flags
 pub const PTE_PRESENT: u64 = 1 << 0;
 pub const PTE_WRITE: u64 = 1 << 1;
-pub const PTE_READ: u64 = 1 << 0;  // Same as present for VT-d
-pub const PTE_SUPER: u64 = 1 << 7;   // Superpage
+pub const PTE_READ: u64 = 1 << 0; // Same as present for VT-d
+pub const PTE_SUPER: u64 = 1 << 7; // Superpage
 pub const PTE_ACCESSED: u64 = 1 << 8;
 pub const PTE_DIRTY: u64 = 1 << 9;
-pub const PTE_SNP: u64 = 1 << 11;    // Snoop behavior
+pub const PTE_SNP: u64 = 1 << 11; // Snoop behavior
 pub const PTE_ADDR_MASK: u64 = 0x000FFFFFFFFFF000;
 
 // =============================================================================
@@ -197,9 +197,9 @@ pub const IommuDomain = struct {
     active: bool,
     devices: [MAX_DEVICES_PER_DOMAIN]DeviceId,
     device_count: u32,
-    page_table_phys: u64,    // Physical address of root page table
-    address_width: u8,        // 39, 48, or 57 bits
-    passthrough: bool,        // 1:1 mapping (no remapping)
+    page_table_phys: u64, // Physical address of root page table
+    address_width: u8, // 39, 48, or 57 bits
+    passthrough: bool, // 1:1 mapping (no remapping)
 
     // Statistics
     mappings_count: u64,
@@ -269,8 +269,8 @@ pub const RmrrRegion = struct {
 // =============================================================================
 
 pub const IommuFault = struct {
-    source_id: u16,        // BDF of faulting device
-    fault_addr: u64,       // Faulting I/O virtual address
+    source_id: u16, // BDF of faulting device
+    fault_addr: u64, // Faulting I/O virtual address
     fault_reason: u8,
     is_write: bool,
     is_present: bool,
@@ -295,7 +295,7 @@ pub const IommuUnit = struct {
     capabilities: u64,
     extended_caps: u64,
     max_domains: u32,
-    supported_aw: u8,   // Bitmask of supported address widths
+    supported_aw: u8, // Bitmask of supported address widths
 
     // State
     translation_enabled: bool,
@@ -485,7 +485,7 @@ pub const IommuManager = struct {
     units: [MAX_IOMMU_UNITS]IommuUnit,
     unit_count: u32,
     enabled: bool,
-    passthrough_mode: bool,  // All devices use 1:1 mapping
+    passthrough_mode: bool, // All devices use 1:1 mapping
 
     pub fn init() IommuManager {
         var mgr: IommuManager = undefined;

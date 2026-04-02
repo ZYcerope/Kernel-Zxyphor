@@ -12,12 +12,12 @@ const std = @import("std");
 
 /// SGX enclave memory types
 pub const SgxPageType = enum(u8) {
-    secs = 0x00,         // SGX Enclave Control Structure
-    tcs = 0x01,          // Thread Control Structure
-    reg = 0x02,          // Regular page
-    va = 0x03,           // Version Array
-    trim = 0x04,         // Trimmed
-    restrict = 0x05,     // Restricted (SGX2)
+    secs = 0x00, // SGX Enclave Control Structure
+    tcs = 0x01, // Thread Control Structure
+    reg = 0x02, // Regular page
+    va = 0x03, // Version Array
+    trim = 0x04, // Trimmed
+    restrict = 0x05, // Restricted (SGX2)
 };
 
 /// SGX page flags
@@ -27,7 +27,7 @@ pub const SgxPageFlags = packed struct {
     execute: bool = false,
     pending: bool = false,
     modified: bool = false,
-    pr: bool = false,     // Permission restriction
+    pr: bool = false, // Permission restriction
     _padding: u2 = 0,
 };
 
@@ -39,9 +39,9 @@ pub const SgxSecs = struct {
     misc_select: u32,
     _reserved1: [24]u8,
     attributes: SgxAttributes,
-    mr_enclave: [32]u8,  // Measurement
+    mr_enclave: [32]u8, // Measurement
     _reserved2: [32]u8,
-    mr_signer: [32]u8,   // Signer measurement
+    mr_signer: [32]u8, // Signer measurement
     _reserved3: [96]u8,
     isv_prod_id: u16,
     isv_svn: u16,
@@ -59,17 +59,17 @@ pub const SgxAttributes = packed struct {
     cet: bool = false,
     kss: bool = false,
     _reserved2: u56 = 0,
-    xfrm: u64 = 0x03,   // XSAVE features
+    xfrm: u64 = 0x03, // XSAVE features
 };
 
 /// SGX TCS (Thread Control Structure)
 pub const SgxTcs = struct {
     _reserved1: u64,
     flags: u64,
-    ossa: u64,            // Offset of SSA
-    cssa: u32,            // Current SSA slot
-    nssa: u32,            // Number of SSA slots
-    oentry: u64,          // Entry offset
+    ossa: u64, // Offset of SSA
+    cssa: u32, // Current SSA slot
+    nssa: u32, // Number of SSA slots
+    oentry: u64, // Entry offset
     _reserved2: u64,
     ofs_base: u64,
     ogs_base: u64,
@@ -165,8 +165,8 @@ pub const TdxAttributes = packed struct {
     // Bits 26-27 reserved
     _reserved2: u2 = 0,
     pks: bool = false,
-    kl: bool = false,     // Key Locker
-    tpa: bool = false,    // TDX partial-write
+    kl: bool = false, // Key Locker
+    tpa: bool = false, // TDX partial-write
     perfmon: bool = false,
     _reserved3: u32 = 0,
 };
@@ -174,8 +174,8 @@ pub const TdxAttributes = packed struct {
 /// TDX TD (Trust Domain) info
 pub const TdxTdInfo = struct {
     attributes: TdxAttributes,
-    xfam: u64,            // Extended Features Available Mask
-    mr_td: [48]u8,        // TD Measurement
+    xfam: u64, // Extended Features Available Mask
+    mr_td: [48]u8, // TD Measurement
     mr_config_id: [48]u8,
     mr_owner: [48]u8,
     mr_owner_config: [48]u8,
@@ -232,14 +232,14 @@ pub const SeamcallLeaf = enum(u64) {
 
 /// CET features
 pub const CetFeatures = packed struct {
-    shstk_en: bool = false,      // Shadow stack enable
-    wr_shstk_en: bool = false,   // Writes to shadow stack pages
-    endbr_en: bool = false,      // ENDBRANCH enforcement (IBT)
-    leg_iw_en: bool = false,     // Legacy interworking enable
-    no_track_en: bool = false,   // NOTRACK prefix support
-    suppress: bool = false,      // Suppress #CP for far transfers
+    shstk_en: bool = false, // Shadow stack enable
+    wr_shstk_en: bool = false, // Writes to shadow stack pages
+    endbr_en: bool = false, // ENDBRANCH enforcement (IBT)
+    leg_iw_en: bool = false, // Legacy interworking enable
+    no_track_en: bool = false, // NOTRACK prefix support
+    suppress: bool = false, // Suppress #CP for far transfers
     _reserved: u2 = 0,
-    tracker: CetTrackerState,    // TRACKER state (for IBT)
+    tracker: CetTrackerState, // TRACKER state (for IBT)
     _padding: u6 = 0,
 };
 
@@ -251,13 +251,13 @@ pub const CetTrackerState = enum(u2) {
 
 /// Shadow stack token
 pub const ShadowStackToken = struct {
-    linear_addr: u64,         // Linear address stored on shadow stack
+    linear_addr: u64, // Linear address stored on shadow stack
     flags: ShadowStackTokenFlags,
 };
 
 pub const ShadowStackTokenFlags = packed struct {
     busy: bool = false,
-    mode: u1 = 0,            // 0=supervisor, 1=user
+    mode: u1 = 0, // 0=supervisor, 1=user
     _reserved: u62 = 0,
 };
 
@@ -267,7 +267,7 @@ pub const CetUserState = struct {
     ibt_enabled: bool,
     shstk_base: u64,
     shstk_size: u64,
-    ssp: u64,                // Shadow Stack Pointer
+    ssp: u64, // Shadow Stack Pointer
     // For signal delivery
     shstk_token: u64,
 };
@@ -296,8 +296,8 @@ pub const SmeFeatures = packed struct {
 pub const SevType = enum(u8) {
     none = 0,
     sev = 1,
-    sev_es = 2,       // Encrypted State
-    sev_snp = 3,      // Secure Nested Paging
+    sev_es = 2, // Encrypted State
+    sev_snp = 3, // Secure Nested Paging
 };
 
 /// SEV-SNP page state
@@ -312,10 +312,10 @@ pub const SnpPageState = enum(u8) {
 
 /// RMP (Reverse Map Table) entry
 pub const RmpEntry = struct {
-    gpa: u64,           // Guest Physical Address
-    asid: u32,          // Address Space ID
-    vmpl: u8,           // VM Permission Level (0-3)
-    page_size: u8,      // 0=4KB, 1=2MB
+    gpa: u64, // Guest Physical Address
+    asid: u32, // Address Space ID
+    vmpl: u8, // VM Permission Level (0-3)
+    page_size: u8, // 0=4KB, 1=2MB
     validated: bool,
     assigned: bool,
     immutable: bool,
@@ -385,7 +385,7 @@ pub const SnpAttestationReport = struct {
 pub const IntelMicrocodeHeader = struct {
     header_version: u32,
     update_revision: u32,
-    date: u32,           // BCD format MMDDYYYY
+    date: u32, // BCD format MMDDYYYY
     processor_signature: u32, // CPUID
     checksum: u32,
     loader_revision: u32,
@@ -442,10 +442,10 @@ pub const CpuMicrocodeInfo = struct {
 /// Microcode source
 pub const MicrocodeSource = enum(u8) {
     none = 0,
-    early_initrd = 1,    // Early load from initrd
-    late_firmware = 2,    // Late load from firmware
-    late_manual = 3,      // Manual late load
-    builtin = 4,          // Built into kernel
+    early_initrd = 1, // Early load from initrd
+    late_firmware = 2, // Late load from firmware
+    late_manual = 3, // Manual late load
+    builtin = 4, // Built into kernel
 };
 
 // ============================================================================
@@ -456,19 +456,19 @@ pub const MicrocodeSource = enum(u8) {
 pub const TsxState = enum(u8) {
     disabled = 0,
     enabled = 1,
-    force_abort = 2,      // RTM always aborts
+    force_abort = 2, // RTM always aborts
 };
 
 /// RTM abort status bits
 pub const RtmAbortStatus = packed struct {
-    explicit: bool = false,     // XABORT instruction
-    retry: bool = false,        // May succeed on retry
-    conflict: bool = false,     // Data conflict
-    overflow: bool = false,     // Internal buffer overflow
-    breakpoint: bool = false,   // Debug breakpoint hit
-    nested: bool = false,       // In nested transaction
+    explicit: bool = false, // XABORT instruction
+    retry: bool = false, // May succeed on retry
+    conflict: bool = false, // Data conflict
+    overflow: bool = false, // Internal buffer overflow
+    breakpoint: bool = false, // Debug breakpoint hit
+    nested: bool = false, // In nested transaction
     _reserved: u2 = 0,
-    xabort_arg: u8 = 0,        // XABORT argument
+    xabort_arg: u8 = 0, // XABORT argument
     _padding: u16 = 0,
 };
 
@@ -479,7 +479,7 @@ pub const RtmAbortStatus = packed struct {
 pub const X64SecuritySubsystem = struct {
     // SGX
     sgx_enabled: bool,
-    sgx_version: u8,       // 1 or 2
+    sgx_version: u8, // 1 or 2
     nr_epc_sections: u32,
     total_epc_bytes: u64,
     nr_enclaves: u64,

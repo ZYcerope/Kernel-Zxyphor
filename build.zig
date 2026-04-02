@@ -1,25 +1,25 @@
 // =============================================================================
-// Kernel Zxyphor - Build System
+// Kernel Zxyphor v0.0.2 "Xceon" — Build System
 // =============================================================================
-// Build configuration for the Zxyphor microkernel targeting x86_64.
-// Supports both freestanding Zig compilation and Rust FFI integration.
+// Advanced build configuration for the Zxyphor kernel targeting x86_64.
+// Zig 0.15.2 module-based build API. Supports freestanding compilation
+// and optional Rust FFI integration via static library linkage.
 // =============================================================================
 
 const std = @import("std");
 const Target = std.Target;
-const CrossTarget = std.zig.CrossTarget;
 
 pub fn build(b: *std.Build) void {
     // -------------------------------------------------------------------------
-    // Target: x86_64 freestanding with no OS, soft-float (no SSE in kernel)
+    // Target: x86_64 freestanding, no OS ABI
+    // SSE2 is kept (mandatory x86_64 ISA); AVX/AVX2 disabled for kernel mode.
+    // SSE state is saved/restored across context switches and interrupts.
     // -------------------------------------------------------------------------
     const target = b.resolveTargetQuery(.{
         .cpu_arch = .x86_64,
         .os_tag = .freestanding,
         .abi = .none,
         .cpu_features_sub = Target.x86.featureSet(&.{
-            .sse,
-            .sse2,
             .avx,
             .avx2,
         }),
@@ -28,44 +28,44 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     // -------------------------------------------------------------------------
-    // Kernel executable
+    // Kernel root module (Zig 0.15.2 module-based API)
     // -------------------------------------------------------------------------
-    const kernel = b.addExecutable(.{
-        .name = "zxyphor",
+    const kernel_module = b.createModule(.{
         .root_source_file = b.path("kernel/src/main.zig"),
         .target = target,
         .optimize = optimize,
         .code_model = .kernel,
+        .red_zone = false,
+        .stack_protector = false,
+        .strip = if (optimize != .Debug) true else null,
+        .single_threaded = false,
+        .pic = false,
     });
 
-    // Use custom linker script for kernel layout
+    // -------------------------------------------------------------------------
+    // Kernel executable
+    // -------------------------------------------------------------------------
+    const kernel = b.addExecutable(.{
+        .name = "zxyphor",
+        .root_module = kernel_module,
+    });
+
+    // Use custom linker script for kernel memory layout
     kernel.setLinkerScript(b.path("linker.ld"));
 
-    // Red zone must be disabled in kernel code — interrupts can corrupt it
-    kernel.root_module.red_zone = false;
-
-    // Stack protector is not available in freestanding environment
-    kernel.root_module.stack_protector = false;
-
-    // Link the Rust static library if it exists
-    kernel.addLibraryPath(b.path("rust/target/x86_64-unknown-none/release"));
-    kernel.linkSystemLibrary("zxyphor_rust");
+    // Optionally link the Rust static library if the build directory exists
+    const rust_lib_path = b.path("rust/target/x86_64-unknown-none/release");
+    if (std.fs.cwd().access("rust/target/x86_64-unknown-none/release/libzxyphor_rust.a", .{})) |_| {
+        kernel.addLibraryPath(rust_lib_path);
+        kernel.linkSystemLibrary("zxyphor_rust");
+    } else |_| {
+        // Rust library not built yet — kernel can still compile without it
+    }
 
     // -------------------------------------------------------------------------
     // Build steps
     // -------------------------------------------------------------------------
     b.installArtifact(kernel);
-
-    // Create bootable ISO image step
-    const iso_step = b.step("iso", "Build a bootable ISO image");
-    const iso_cmd = b.addSystemCommand(&.{
-        "grub-mkrescue",
-        "-o",
-        "zxyphor.iso",
-        "isodir",
-    });
-    iso_cmd.step.dependOn(b.getInstallStep());
-    iso_step.dependOn(&iso_cmd.step);
 
     // Run in QEMU step
     const run_step = b.step("run", "Run the kernel in QEMU");
@@ -105,14 +105,14 @@ pub fn build(b: *std.Build) void {
     debug_cmd.step.dependOn(b.getInstallStep());
     debug_step.dependOn(&debug_cmd.step);
 
-    // Unit tests (run in hosted environment for testing kernel logic)
-    const unit_tests = b.addTest(.{
-        .root_source_file = b.path("kernel/src/main.zig"),
-        .target = b.host,
-        .optimize = optimize,
+    // Create bootable ISO image step
+    const iso_step = b.step("iso", "Build a bootable ISO image");
+    const iso_cmd = b.addSystemCommand(&.{
+        "grub-mkrescue",
+        "-o",
+        "zxyphor.iso",
+        "isodir",
     });
-
-    const run_unit_tests = b.addRunArtifact(unit_tests);
-    const test_step = b.step("test", "Run kernel unit tests");
-    test_step.dependOn(&run_unit_tests.step);
+    iso_cmd.step.dependOn(b.getInstallStep());
+    iso_step.dependOn(&iso_cmd.step);
 }

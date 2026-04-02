@@ -61,19 +61,19 @@ pub const EfiVariableAttributes = packed struct(u32) {
 };
 
 pub const EfiMemoryAttribute = packed struct(u64) {
-    uc: bool = false,           // Uncacheable
-    wc: bool = false,           // Write Combining
-    wt: bool = false,           // Write Through
-    wb: bool = false,           // Write Back
-    uce: bool = false,          // Uncacheable Exported
+    uc: bool = false, // Uncacheable
+    wc: bool = false, // Write Combining
+    wt: bool = false, // Write Through
+    wb: bool = false, // Write Back
+    uce: bool = false, // Uncacheable Exported
     _reserved1: u7 = 0,
-    wp: bool = false,           // Write Protected
-    rp: bool = false,           // Read Protected
-    xp: bool = false,           // Execute Protected
-    nv: bool = false,           // Non-Volatile
+    wp: bool = false, // Write Protected
+    rp: bool = false, // Read Protected
+    xp: bool = false, // Execute Protected
+    nv: bool = false, // Non-Volatile
     more_reliable: bool = false,
-    ro: bool = false,           // Read Only
-    sp: bool = false,           // Specific Purpose
+    ro: bool = false, // Read Only
+    sp: bool = false, // Specific Purpose
     cpu_crypto: bool = false,
     _reserved2: u43 = 0,
     runtime: bool = false,
@@ -129,7 +129,7 @@ pub const AcpiTableHeader = extern struct {
 // ============================================================================
 
 pub const AcpiRsdp = extern struct {
-    signature: [8]u8,         // "RSD PTR "
+    signature: [8]u8, // "RSD PTR "
     checksum: u8,
     oem_id: [6]u8,
     revision: u8,
@@ -150,7 +150,7 @@ pub const ACPI_MADT_SIGNATURE = "APIC";
 pub const AcpiMadt = extern struct {
     header: AcpiTableHeader,
     local_apic_address: u32,
-    flags: u32,                // bit 0 = PCAT_COMPAT
+    flags: u32, // bit 0 = PCAT_COMPAT
     // Variable-length entries follow
 };
 
@@ -186,7 +186,7 @@ pub const MadtLocalApic = extern struct {
     length: u8,
     acpi_processor_uid: u8,
     apic_id: u8,
-    flags: u32,             // bit 0 = enabled, bit 1 = online capable
+    flags: u32, // bit 0 = enabled, bit 1 = online capable
 };
 
 pub const MadtIoApic = extern struct {

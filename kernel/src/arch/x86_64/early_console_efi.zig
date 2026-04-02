@@ -13,26 +13,26 @@ const std = @import("std");
 /// Early console type
 pub const EarlyConsoleType = enum(u8) {
     none = 0,
-    serial = 1,          // COM1/COM2 UART
-    vga_text = 2,        // VGA text mode 80x25
-    efi_console = 3,     // EFI Simple Text Output
-    framebuffer = 4,     // Framebuffer console
+    serial = 1, // COM1/COM2 UART
+    vga_text = 2, // VGA text mode 80x25
+    efi_console = 3, // EFI Simple Text Output
+    framebuffer = 4, // Framebuffer console
     // Zxyphor
     zxy_debug_port = 10,
 };
 
 /// Serial port config for early console
 pub const EarlySerialConfig = struct {
-    io_base: u16,        // I/O port base (0x3F8 = COM1)
-    baud_rate: u32,      // Default 115200
-    data_bits: u8,       // 5, 6, 7, 8
-    stop_bits: u8,       // 1, 2
+    io_base: u16, // I/O port base (0x3F8 = COM1)
+    baud_rate: u32, // Default 115200
+    data_bits: u8, // 5, 6, 7, 8
+    stop_bits: u8, // 1, 2
     parity: SerialParity,
     // MMIO
-    mmio_base: u64,      // Memory-mapped UART base
+    mmio_base: u64, // Memory-mapped UART base
     is_mmio: bool,
-    reg_shift: u8,       // Register shift (0, 1, 2)
-    reg_width: u8,       // Register width (1, 4)
+    reg_shift: u8, // Register shift (0, 1, 2)
+    reg_width: u8, // Register width (1, 4)
 };
 
 /// Serial parity
@@ -46,12 +46,12 @@ pub const SerialParity = enum(u8) {
 
 /// VGA text mode state
 pub const VgaTextState = struct {
-    base_addr: u64,       // 0xB8000
-    width: u16,           // 80
-    height: u16,          // 25
+    base_addr: u64, // 0xB8000
+    width: u16, // 80
+    height: u16, // 25
     cursor_x: u16,
     cursor_y: u16,
-    attr: u8,             // Color attribute
+    attr: u8, // Color attribute
     // Colors
     pub const COLOR_BLACK: u8 = 0;
     pub const COLOR_BLUE: u8 = 1;
@@ -140,7 +140,7 @@ pub const EfiMemoryDescriptor = struct {
     padding: u32,
     phys_start: u64,
     virt_start: u64,
-    num_pages: u64,      // 4KB pages
+    num_pages: u64, // 4KB pages
     attribute: u64,
 };
 
@@ -170,17 +170,23 @@ pub const EfiGuid = struct {
 
 /// Well-known EFI GUIDs
 pub const EFI_GLOBAL_VARIABLE_GUID = EfiGuid{
-    .data1 = 0x8BE4DF61, .data2 = 0x93CA, .data3 = 0x11D2,
+    .data1 = 0x8BE4DF61,
+    .data2 = 0x93CA,
+    .data3 = 0x11D2,
     .data4 = .{ 0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C },
 };
 
 pub const EFI_ACPI_20_TABLE_GUID = EfiGuid{
-    .data1 = 0x8868E871, .data2 = 0xE4F1, .data3 = 0x11D3,
+    .data1 = 0x8868E871,
+    .data2 = 0xE4F1,
+    .data3 = 0x11D3,
     .data4 = .{ 0xBC, 0x22, 0x00, 0x80, 0xC7, 0x3C, 0x88, 0x81 },
 };
 
 pub const EFI_SMBIOS3_TABLE_GUID = EfiGuid{
-    .data1 = 0xF2FD1544, .data2 = 0x9794, .data3 = 0x4A2C,
+    .data1 = 0xF2FD1544,
+    .data2 = 0x9794,
+    .data3 = 0x4A2C,
     .data4 = .{ 0x99, 0x2E, 0xE5, 0xBB, 0xCF, 0x20, 0xE3, 0x94 },
 };
 
@@ -290,7 +296,7 @@ pub const CmdlineParser = struct {
     debug: bool,
     maxcpus: u32,
     // Memory
-    mem_limit: u64,      // mem= parameter
+    mem_limit: u64, // mem= parameter
     memmap_entries: u32,
 };
 
@@ -301,8 +307,8 @@ pub const CmdlineParser = struct {
 /// Initrd type
 pub const InitrdType = enum(u8) {
     none = 0,
-    initrd = 1,          // Traditional initrd (ext2 image)
-    initramfs = 2,       // CPIO archive
+    initrd = 1, // Traditional initrd (ext2 image)
+    initramfs = 2, // CPIO archive
     initramfs_compressed = 3,
 };
 
@@ -330,7 +336,7 @@ pub const InitrdCompression = enum(u8) {
 
 /// CPIO header (newc format)
 pub const CpioNewcHeader = struct {
-    magic: [6]u8,        // "070701"
+    magic: [6]u8, // "070701"
     ino: [8]u8,
     mode: [8]u8,
     uid: [8]u8,
@@ -352,8 +358,8 @@ pub const CpioNewcHeader = struct {
 
 /// SMBIOS entry point type
 pub const SmbiosEntryType = enum(u8) {
-    smbios21 = 0,     // 32-bit entry point
-    smbios30 = 1,     // 64-bit entry point
+    smbios21 = 0, // 32-bit entry point
+    smbios30 = 1, // 64-bit entry point
 };
 
 /// SMBIOS structure type

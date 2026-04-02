@@ -41,7 +41,7 @@ pub const TlbPageSize = packed struct(u32) {
 // PCID / ASID (Address Space Identifier)
 // ============================================================================
 
-pub const MAX_ASID_AVAILABLE = 4096;  // 12-bit PCID on x86_64
+pub const MAX_ASID_AVAILABLE = 4096; // 12-bit PCID on x86_64
 
 pub const PcidState = struct {
     cr3_pcid_mask: u64,
@@ -54,11 +54,11 @@ pub const PcidState = struct {
 pub const AsidInfo = struct {
     asid: u16,
     generation: u64,
-    mm: u64,           // struct mm_struct *
+    mm: u64, // struct mm_struct *
 };
 
 pub const TlbState = struct {
-    loaded_mm: u64,              // Currently loaded mm
+    loaded_mm: u64, // Currently loaded mm
     next_asid: u16,
     asid_generation: u64,
     ctxs: [MAX_ASID_AVAILABLE]AsidCtx,
@@ -93,9 +93,9 @@ pub const FlushTlbReason = enum(u8) {
 };
 
 pub const FlushTlbInfo = struct {
-    mm: u64,                  // struct mm_struct *
-    start: u64,               // Virtual address start
-    end: u64,                 // Virtual address end
+    mm: u64, // struct mm_struct *
+    start: u64, // Virtual address start
+    end: u64, // Virtual address end
     stride_shift: u64,
     freed_tables: bool,
     new_tlb_gen: u64,
@@ -105,7 +105,7 @@ pub const FlushTlbInfo = struct {
 
 pub const TlbBatchFlush = struct {
     mm: u64,
-    cpumask: [4]u64,          // Up to 256 CPUs
+    cpumask: [4]u64, // Up to 256 CPUs
     start: u64,
     end: u64,
     stride_shift: u64,
@@ -129,10 +129,10 @@ pub const TlbShootdownStats = struct {
 };
 
 pub const ShootdownMode = enum(u8) {
-    All = 0,           // Full TLB flush
-    Range = 1,         // Range-based flush
-    Single = 2,        // Single page flush
-    Lazy = 3,          // Deferred/lazy flush
+    All = 0, // Full TLB flush
+    Range = 1, // Range-based flush
+    Single = 2, // Single page flush
+    Lazy = 3, // Deferred/lazy flush
 };
 
 // ============================================================================
@@ -157,7 +157,7 @@ pub const PgeConfig = struct {
 // ============================================================================
 
 pub const CpuTopologyLevel = enum(u8) {
-    Thread = 0,     // SMT thread
+    Thread = 0, // SMT thread
     Core = 1,
     Module = 2,
     Tile = 3,
@@ -178,15 +178,15 @@ pub const CpuTopology = struct {
     core_id: u32,
     logical_core_id: u32,
     smt_id: u32,
-    cu_id: u32,            // Compute unit (AMD)
-    llc_id: u32,           // Last-level cache ID
+    cu_id: u32, // Compute unit (AMD)
+    llc_id: u32, // Last-level cache ID
     amd_node_id: u32,
     // Masks
-    core_cpumask: [4]u64,       // CPUs in same core
-    die_cpumask: [4]u64,        // CPUs in same die
-    pkg_cpumask: [4]u64,        // CPUs in same package
-    llc_shared_map: [4]u64,     // CPUs sharing LLC
-    cluster_cpumask: [4]u64,    // CPUs in same cluster
+    core_cpumask: [4]u64, // CPUs in same core
+    die_cpumask: [4]u64, // CPUs in same die
+    pkg_cpumask: [4]u64, // CPUs in same package
+    llc_shared_map: [4]u64, // CPUs sharing LLC
+    cluster_cpumask: [4]u64, // CPUs in same cluster
 };
 
 pub const X86CpuidTopology = struct {
@@ -223,7 +223,7 @@ pub const NumaNodeData = struct {
     node_start_pfn: u64,
     node_present_pages: u64,
     node_spanned_pages: u64,
-    node_zones: [4]ZoneInfo,  // DMA, DMA32, Normal, Movable
+    node_zones: [4]ZoneInfo, // DMA, DMA32, Normal, Movable
     totalram_pages: u64,
     freeram_pages: u64,
     active_pages: u64,
@@ -238,7 +238,7 @@ pub const ZoneInfo = struct {
     managed_pages: u64,
     spanned_pages: u64,
     present_pages: u64,
-    watermark: [3]u64,  // min, low, high
+    watermark: [3]u64, // min, low, high
     nr_reserved_highatomic: u64,
     lowmem_reserve: [4]u64,
     percpu_drift_mark: u64,
@@ -249,8 +249,8 @@ pub const ZoneInfo = struct {
 // ============================================================================
 
 pub const SchedDomainLevel = enum(u8) {
-    Sibling = 0,      // SMT
-    MC = 1,            // Multi-core
+    Sibling = 0, // SMT
+    MC = 1, // Multi-core
     Die = 2,
     Cluster = 3,
     Numa = 4,
@@ -434,12 +434,12 @@ pub const CpuFeatureCapability = packed struct(u64) {
 // ============================================================================
 
 pub const TlbTopologyManager = struct {
-    tlb_entries: [6]TlbEntryInfo,  // Various TLB levels/types
+    tlb_entries: [6]TlbEntryInfo, // Various TLB levels/types
     num_tlb_entries: u8,
     pcid_state: PcidState,
     pge_config: PgeConfig,
     shootdown_stats: TlbShootdownStats,
-    cpu_topology: [256]CpuTopology,     // Per-CPU topology
+    cpu_topology: [256]CpuTopology, // Per-CPU topology
     numa_topo: NumaTopology,
     cpuid_topo: X86CpuidTopology,
     num_cpus_online: u32,

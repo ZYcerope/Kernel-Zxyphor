@@ -43,7 +43,7 @@ pub inline fn writeCr0(value: u64) void {
     asm volatile ("movq %[value], %%cr0"
         :
         : [value] "r" (value),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -78,7 +78,7 @@ pub inline fn writeCr3(value: u64) void {
     asm volatile ("movq %[value], %%cr3"
         :
         : [value] "r" (value),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
@@ -144,7 +144,7 @@ pub inline fn writeCr4(value: u64) void {
     asm volatile ("movq %[value], %%cr4"
         :
         : [value] "r" (value),
-        : "memory"
+        : .{ .memory = true }
     );
 }
 
