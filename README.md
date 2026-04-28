@@ -9,7 +9,7 @@
   ███╔╝   ██╔██╗   ╚██╔╝  ██╔═══╝ ██╔══██║██║   ██║██╔══██╗
  ███████╗██╔╝ ██╗   ██║   ██║     ██║  ██║╚██████╔╝██║  ██║
  ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
-                    v0.0.2 Xceon
+                    v0.0.4 Xceon III
 ```
 
 ## Overview
@@ -23,6 +23,7 @@ Zxyphor is a from-scratch, Unix-inspired operating system kernel targeting the x
 - **Multiboot2 compatible**: Boots with GRUB2 or any Multiboot2-compliant bootloader
 - **Modular architecture**: Clean separation between boot, arch, mm, sched, fs, net, ipc, security, and drivers
 - **Linux-inspired syscall ABI**: POSIX-compatible system call interface with 30+ syscalls
+- **2026 hardware-aware profile**: CPUID-driven tuning for AVX10, AMX, CET, FRED, PKS, TME, CXL-ready memory tiers, and high queue-count storage/network paths
 
 ## Architecture
 
@@ -33,7 +34,7 @@ Zxyphor is a from-scratch, Unix-inspired operating system kernel targeting the x
 │  Syscall Interface  │  INT 0x80 / SYSCALL  │  Signal Delivery│
 ├─────────┬───────────┼──────────┬───────────┼────────┬────────┤
 │Scheduler│  IPC      │   VFS    │ Networking│Security│ Drivers│
-│  (CFS)  │Pipe/Shm/  │VNode/    │TCP/IP     │ DAC/   │VGA/KB/ │
+│ (EEVDF) │Pipe/Shm/  │VNode/    │TCP/IP     │ DAC/   │VGA/KB/ │
 │         │  Signal   │Mount     │ Stack     │  Caps  │PCI/ATA │
 ├─────────┴───────────┼──────────┴───────────┼────────┴────────┤
 │   Memory Management │   Kernel Libraries   │  Rust Modules   │
@@ -85,7 +86,7 @@ Kernel Zxyphor/
 │       ├── sched/             # Process & scheduling
 │       │   ├── process.zig    #   PCB, process table (4096 max)
 │       │   ├── thread.zig     #   TCB, thread table (8192 max)
-│       │   ├── scheduler.zig  #   CFS scheduler (vruntime-based)
+│       │   ├── scheduler.zig  #   EEVDF scheduler (deadline-based fairness)
 │       │   └── context.zig    #   Context switch, FPU save/restore
 │       │
 │       ├── fs/                # Filesystems
@@ -165,13 +166,26 @@ Kernel Zxyphor/
 | **Slab** | Size classes: 32, 64, 128, 256, 512, 1024, 2048, 4096 bytes |
 | **Page** | Descriptors with reference counting and COW (copy-on-write) support |
 
-### Scheduler (CFS)
+### Scheduler (EEVDF)
 
-- **Algorithm**: Completely Fair Scheduler based on virtual runtime (`vruntime`)
+- **Algorithm**: Earliest Eligible Virtual Deadline First with virtual eligible time and virtual deadline
 - **Nice levels**: -20 to +19 with Linux-compatible weight table (40 entries)
-- **Timeslice**: Default 10ms, minimum granularity 1ms
+- **Timeslice**: Hardware-profiled 1.5–3ms adaptive quantum, minimum granularity 0.75ms
 - **Preemption**: Tick-driven preemption when current task exceeds ideal runtime
-- **Priority**: Processes with lower vruntime are scheduled first
+- **Priority**: Eligible processes with the earliest virtual deadline are scheduled first
+- **Topology**: NUMA-aware placement, work stealing, and P-core/E-core aware tuning when hybrid CPUs are detected
+
+### Supercomputer Profile
+
+At boot, Zxyphor now synthesizes a runtime "supercomputer profile" from CPUID and ACPI data:
+
+| Signal | Kernel use |
+|--------|------------|
+| AVX2 / AVX-512 / AVX10 / AMX / VNNI | Raises compute capability score and enables accelerator-aware scheduler hints |
+| LA57 / 1GiB pages / CLDEMOTE / TME | Selects NUMA/CXL-ready memory tiering policy |
+| x2APIC / UINTR / MOVDIRI / MOVDIR64B / FSRM | Sizes high-throughput interrupt and blk-mq queue budgets |
+| CET shadow stack / IBT / FRED / PKS | Selects modern control-flow and supervisor-memory hardening posture |
+| ACPI CPU and MCFG data | Derives recommended CPU lanes, NUMA tiers, and PCIe ECAM capability |
 
 ### Networking (TCP/IP)
 
@@ -196,6 +210,7 @@ Full networking stack from Layer 2 to Layer 4:
 - **Resource limits**: 16 rlimit types (file size, CPU time, memory, open files, etc.)
 - **Entropy pool**: xoshiro256** PRNG with entropy mixing
 - **Audit log**: 1024-entry circular buffer for security events
+- **Modern x86 hardening**: SMEP, SMAP, UMIP, PCID, CET shadow stack, CET-IBT, PKS, FRED awareness, BHI/IPRED/RRSBA mitigation detection, and Total Memory Encryption detection when exposed by hardware
 
 ### Cryptography (Rust)
 
@@ -324,7 +339,7 @@ cat > iso/boot/grub/grub.cfg << 'EOF'
 set timeout=3
 set default=0
 
-menuentry "Zxyphor Kernel v0.0.2 Xceon" {
+menuentry "Zxyphor Kernel v0.0.4 Xceon III" {
     multiboot2 /boot/zxyphor
     boot
 }
@@ -366,21 +381,23 @@ Virtual Address Space (Higher Half):
 |---------|---------------|
 | Architecture | x86_64 (AMD64) |
 | Boot protocol | Multiboot2 |
-| Max physical RAM | 16 GB |
-| Page size | 4 KB (with 2 MB large page support) |
+| Max physical RAM | Hardware-profiled via CPUID physical address width |
+| Page size | 4 KB with 2 MB, 1 GB, and LA57-aware virtual-address support |
 | Max processes | 4096 |
 | Max threads | 8192 |
 | Max open files | 65536 (system-wide) |
 | Max FDs per process | 256 |
 | Kernel stack | 64 KB |
-| IST stacks | 3 × 16 KB (DF, NMI, MC) |
+| IST stacks | 7 × 16 KB (DF, NMI, MC, DB, BP, PF, VC) |
 | Scheduler tick | 1 ms |
-| Default timeslice | 10 ms |
+| Default timeslice | 1.5–3 ms adaptive EEVDF quantum |
 | Max TCP connections | 1024 |
 | Max UDP sockets | 256 |
 | Supported syscalls | 30+ |
 | IPC mechanisms | Pipes, Signals, Shared Memory |
 | Filesystems | VFS, ramfs, devfs, zxyfs, ext4, FAT32 |
+| 2026 acceleration | AVX10, AVX-512/VNNI, AMX, VAES, VPCLMULQDQ, SHA extensions when present |
+| 2026 security | CET, FRED, PKS, TME, BHI/IPRED/RRSBA mitigation detection when present |
 
 ## License
 

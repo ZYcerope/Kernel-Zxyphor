@@ -1,5 +1,5 @@
 // =============================================================================
-// Kernel Zxyphor v0.0.3 "Xceon II" — Main Entry Point
+// Kernel Zxyphor v0.0.4 "Xceon III" — Main Entry Point
 // =============================================================================
 // Next-generation microkernel/hybrid OS kernel surpassing Linux 7.x (2026).
 //
@@ -66,7 +66,8 @@
 //   Phase 23: Networking (TCP/IP, eBPF XDP fast path, nftables)
 //   Phase 24: Security (Landlock LSM, capabilities, KPTI verify)
 //   Phase 25: EEVDF scheduler + per-CPU run queues + EAS
-//   Phase 26: Create PID 0 (idle) + PID 1 (init) → sti → schedule()
+//   Phase 26: Supercomputer profile synthesis from hardware capabilities
+//   Phase 27: Create PID 0 (idle) + PID 1 (init) → sti → schedule()
 // =============================================================================
 
 const std = @import("std");
@@ -77,15 +78,15 @@ const std = @import("std");
 pub const KERNEL_NAME = "Zxyphor";
 pub const KERNEL_VERSION_MAJOR: u32 = 0;
 pub const KERNEL_VERSION_MINOR: u32 = 0;
-pub const KERNEL_VERSION_PATCH: u32 = 3;
-pub const KERNEL_CODENAME = "Xceon II";
+pub const KERNEL_VERSION_PATCH: u32 = 4;
+pub const KERNEL_CODENAME = "Xceon III";
 pub const KERNEL_ARCH = "x86_64";
-pub const KERNEL_BUILD_DATE = "2026-04-02";
+pub const KERNEL_BUILD_DATE = "2026-04-28";
 pub const KERNEL_CONFIG_HZ: u32 = 1000;
 pub const KERNEL_MAX_CPUS: u32 = 256;
 pub const KERNEL_MAX_NUMA_NODES: u32 = 64;
 pub const KERNEL_NR_SYSCALLS: u32 = 512;
-pub const KERNEL_FEATURES = "EEVDF,KPTI,KASLR,io_uring,eBPF,cgroup2,RCU,SLUB,LA57,x2APIC,NVMe,Landlock,seccomp,DAMON,EAS,THP,PSI";
+pub const KERNEL_FEATURES = "EEVDF,KPTI,KASLR,io_uring,eBPF,cgroup2,RCU,SLUB,LA57,x2APIC,NVMe,Landlock,seccomp,DAMON,EAS,THP,PSI,CET,FRED,AMX,AVX10,TDX,SNP,CXL";
 
 // =============================================================================
 // Compile-time configuration — can be overridden via -D flags
@@ -281,29 +282,92 @@ const CpuFeatures = struct {
     avx512f: bool = false,
     rdseed: bool = false,
     adx: bool = false,
+    serialize: bool = false,
+    hybrid: bool = false,
+    tsxldtrk: bool = false,
     smap: bool = false,
     clflushopt: bool = false,
     clwb: bool = false,
     sha: bool = false,
+    avx512_ifma: bool = false,
+    avx512_vbmi: bool = false,
 
     // CPUID.07h:ECX
+    cet_ss: bool = false,
     umip: bool = false,
     pku: bool = false,
     ospke: bool = false,
     waitpkg: bool = false,
+    avx512_vbmi2: bool = false,
     gfni: bool = false,
     vaes: bool = false,
-    cet_ss: bool = false,
+    vpclmulqdq: bool = false,
+    avx512_vnni: bool = false,
+    avx512_bitalg: bool = false,
+    tme: bool = false,
     la57: bool = false,
+    mawau: u5 = 0,
     rdpid: bool = false,
+    kl: bool = false,
+    bus_lock_detect: bool = false,
+    cldemote: bool = false,
+    movdiri: bool = false,
+    movdir64b: bool = false,
+    sgx_lc: bool = false,
+    pks: bool = false,
 
     // CPUID.07h:EDX
+    avx512_4vnniw: bool = false,
+    avx512_4fmaps: bool = false,
+    fsrm: bool = false,
+    uintr: bool = false,
+    avx512_vp2intersect: bool = false,
+    srbds_ctrl: bool = false,
+    md_clear: bool = false,
+    rtm_always_abort: bool = false,
+    serialize_edx: bool = false,
+    hybrid_edx: bool = false,
+    tsxldtrk_edx: bool = false,
+    pconfig: bool = false,
+    arch_lbr: bool = false,
+    cet_ibt: bool = false,
+    amx_bf16: bool = false,
+    avx512_fp16: bool = false,
+    amx_tile: bool = false,
+    amx_int8: bool = false,
     spec_ctrl: bool = false,
     stibp: bool = false,
     flush_l1d: bool = false,
     arch_capabilities: bool = false,
     core_capabilities: bool = false,
     ssbd: bool = false,
+
+    // CPUID.07h subleaf 1
+    avx_vnni: bool = false,
+    avx512_bf16: bool = false,
+    cmpccxadd: bool = false,
+    fred: bool = false,
+    lkgs: bool = false,
+    wrmsrns: bool = false,
+    nmi_source: bool = false,
+    amx_fp16: bool = false,
+    hreset: bool = false,
+    avx_ifma: bool = false,
+    lam: bool = false,
+    msrlist: bool = false,
+
+    // CPUID.07h subleaf 2
+    psfd: bool = false,
+    ipred_ctrl: bool = false,
+    rrsba_ctrl: bool = false,
+    ddpd_u: bool = false,
+    bhi_ctrl: bool = false,
+    mcdt_no: bool = false,
+
+    // CPUID.24h
+    avx10: bool = false,
+    avx10_version: u8 = 0,
+    avx10_vector_bits: u16 = 0,
 
     // CPUID.80000001h
     nx: bool = false,
@@ -312,6 +376,18 @@ const CpuFeatures = struct {
     syscall: bool = false,
     rdtscp: bool = false,
     invariant_tsc: bool = false,
+
+    // CPUID.80000008h
+    phys_addr_bits: u8 = 0,
+    virt_addr_bits: u8 = 0,
+    wbnoinvd: bool = false,
+    ibpb: bool = false,
+    ibrs: bool = false,
+    stibp_ext: bool = false,
+    stibp_always_on: bool = false,
+    prefer_ibrs: bool = false,
+    pp_invlpg: bool = false,
+    ssbd_ext: bool = false,
 
     // Topology
     max_cpuid_leaf: u32 = 0,
@@ -329,6 +405,24 @@ const CpuFeatures = struct {
 
 var cpu_features: CpuFeatures = .{};
 var bsp_apic_id: u32 = 0;
+
+const SupercomputerProfile = struct {
+    compute_score: u32 = 0,
+    memory_score: u32 = 0,
+    io_score: u32 = 0,
+    security_score: u32 = 0,
+    virtualization_score: u32 = 0,
+    capability_score: u32 = 0,
+    accelerators: u32 = 0,
+    recommended_cpus: u32 = 1,
+    numa_nodes: u32 = 1,
+    io_queues: u32 = 1,
+    scheduler_quantum_ns: u64 = 3_000_000,
+    memory_tier_policy: []const u8 = "single-tier",
+    security_posture: []const u8 = "baseline",
+};
+
+var super_profile: SupercomputerProfile = .{};
 
 fn detect_cpu() void {
     // Leaf 0x00: Vendor string & max leaf
@@ -423,26 +517,92 @@ fn detect_cpu() void {
         cpu_features.rdseed = ebx7 & (1 << 18) != 0;
         cpu_features.adx = ebx7 & (1 << 19) != 0;
         cpu_features.smap = ebx7 & (1 << 20) != 0;
+        cpu_features.avx512_ifma = ebx7 & (1 << 21) != 0;
         cpu_features.clflushopt = ebx7 & (1 << 23) != 0;
         cpu_features.clwb = ebx7 & (1 << 24) != 0;
         cpu_features.sha = ebx7 & (1 << 29) != 0;
+        cpu_features.avx512_vbmi = ecx7 & (1 << 1) != 0;
 
+        cpu_features.cet_ss = ecx7 & (1 << 7) != 0;
         cpu_features.umip = ecx7 & (1 << 2) != 0;
         cpu_features.pku = ecx7 & (1 << 3) != 0;
         cpu_features.ospke = ecx7 & (1 << 4) != 0;
         cpu_features.waitpkg = ecx7 & (1 << 5) != 0;
+        cpu_features.avx512_vbmi2 = ecx7 & (1 << 6) != 0;
         cpu_features.gfni = ecx7 & (1 << 8) != 0;
         cpu_features.vaes = ecx7 & (1 << 9) != 0;
-        cpu_features.cet_ss = ecx7 & (1 << 7) != 0;
+        cpu_features.vpclmulqdq = ecx7 & (1 << 10) != 0;
+        cpu_features.avx512_vnni = ecx7 & (1 << 11) != 0;
+        cpu_features.avx512_bitalg = ecx7 & (1 << 12) != 0;
+        cpu_features.tme = ecx7 & (1 << 13) != 0;
         cpu_features.la57 = ecx7 & (1 << 16) != 0;
+        cpu_features.mawau = @truncate((ecx7 >> 17) & 0x1F);
         cpu_features.rdpid = ecx7 & (1 << 22) != 0;
+        cpu_features.kl = ecx7 & (1 << 23) != 0;
+        cpu_features.bus_lock_detect = ecx7 & (1 << 24) != 0;
+        cpu_features.cldemote = ecx7 & (1 << 25) != 0;
+        cpu_features.movdiri = ecx7 & (1 << 27) != 0;
+        cpu_features.movdir64b = ecx7 & (1 << 28) != 0;
+        cpu_features.sgx_lc = ecx7 & (1 << 30) != 0;
+        cpu_features.pks = ecx7 & (1 << 31) != 0;
 
+        cpu_features.avx512_4vnniw = edx7 & (1 << 2) != 0;
+        cpu_features.avx512_4fmaps = edx7 & (1 << 3) != 0;
+        cpu_features.fsrm = edx7 & (1 << 4) != 0;
+        cpu_features.uintr = edx7 & (1 << 5) != 0;
+        cpu_features.avx512_vp2intersect = edx7 & (1 << 8) != 0;
+        cpu_features.srbds_ctrl = edx7 & (1 << 9) != 0;
+        cpu_features.md_clear = edx7 & (1 << 10) != 0;
+        cpu_features.rtm_always_abort = edx7 & (1 << 11) != 0;
+        cpu_features.serialize_edx = edx7 & (1 << 14) != 0;
+        cpu_features.hybrid_edx = edx7 & (1 << 15) != 0;
+        cpu_features.tsxldtrk_edx = edx7 & (1 << 16) != 0;
+        cpu_features.serialize = cpu_features.serialize_edx;
+        cpu_features.hybrid = cpu_features.hybrid_edx;
+        cpu_features.tsxldtrk = cpu_features.tsxldtrk_edx;
+        cpu_features.pconfig = edx7 & (1 << 18) != 0;
+        cpu_features.arch_lbr = edx7 & (1 << 19) != 0;
+        cpu_features.cet_ibt = edx7 & (1 << 20) != 0;
+        cpu_features.amx_bf16 = edx7 & (1 << 22) != 0;
+        cpu_features.avx512_fp16 = edx7 & (1 << 23) != 0;
+        cpu_features.amx_tile = edx7 & (1 << 24) != 0;
+        cpu_features.amx_int8 = edx7 & (1 << 25) != 0;
         cpu_features.spec_ctrl = edx7 & (1 << 26) != 0;
         cpu_features.stibp = edx7 & (1 << 27) != 0;
         cpu_features.flush_l1d = edx7 & (1 << 28) != 0;
         cpu_features.arch_capabilities = edx7 & (1 << 29) != 0;
         cpu_features.core_capabilities = edx7 & (1 << 30) != 0;
         cpu_features.ssbd = edx7 & (1 << 31) != 0;
+
+        const leaf7_1 = cpuid(7, 1);
+        cpu_features.avx_vnni = leaf7_1.eax & (1 << 4) != 0;
+        cpu_features.avx512_bf16 = leaf7_1.eax & (1 << 5) != 0;
+        cpu_features.cmpccxadd = leaf7_1.eax & (1 << 7) != 0;
+        cpu_features.fred = leaf7_1.eax & (1 << 17) != 0;
+        cpu_features.lkgs = leaf7_1.eax & (1 << 18) != 0;
+        cpu_features.wrmsrns = leaf7_1.eax & (1 << 19) != 0;
+        cpu_features.nmi_source = leaf7_1.eax & (1 << 20) != 0;
+        cpu_features.amx_fp16 = leaf7_1.eax & (1 << 21) != 0;
+        cpu_features.hreset = leaf7_1.eax & (1 << 22) != 0;
+        cpu_features.avx_ifma = leaf7_1.eax & (1 << 23) != 0;
+        cpu_features.lam = leaf7_1.eax & (1 << 26) != 0;
+        cpu_features.msrlist = leaf7_1.edx & (1 << 0) != 0;
+
+        const leaf7_2 = cpuid(7, 2);
+        cpu_features.psfd = leaf7_2.edx & (1 << 0) != 0;
+        cpu_features.ipred_ctrl = leaf7_2.edx & (1 << 1) != 0;
+        cpu_features.rrsba_ctrl = leaf7_2.edx & (1 << 2) != 0;
+        cpu_features.ddpd_u = leaf7_2.edx & (1 << 3) != 0;
+        cpu_features.bhi_ctrl = leaf7_2.edx & (1 << 4) != 0;
+        cpu_features.mcdt_no = leaf7_2.edx & (1 << 5) != 0;
+    }
+
+    if (cpu_features.max_cpuid_leaf >= 0x24) {
+        const leaf24 = cpuid(0x24, 0);
+        cpu_features.avx10_version = @truncate(leaf24.ebx & 0xFF);
+        const avx10_shift: u4 = @truncate((leaf24.ebx >> 16) & 0x3);
+        cpu_features.avx10_vector_bits = @as(u16, 128) << avx10_shift;
+        cpu_features.avx10 = cpu_features.avx10_version != 0;
     }
 
     // Extended leaves
@@ -477,6 +637,20 @@ fn detect_cpu() void {
     if (cpu_features.max_ext_leaf >= 0x80000007) {
         const ext7 = cpuid(0x80000007, 0);
         cpu_features.invariant_tsc = ext7.edx & (1 << 8) != 0;
+    }
+
+    if (cpu_features.max_ext_leaf >= 0x80000008) {
+        const ext8 = cpuid(0x80000008, 0);
+        cpu_features.phys_addr_bits = @truncate(ext8.eax & 0xFF);
+        cpu_features.virt_addr_bits = @truncate((ext8.eax >> 8) & 0xFF);
+        cpu_features.wbnoinvd = ext8.ebx & (1 << 9) != 0;
+        cpu_features.ibpb = ext8.ebx & (1 << 12) != 0;
+        cpu_features.ibrs = ext8.ebx & (1 << 14) != 0;
+        cpu_features.stibp_ext = ext8.ebx & (1 << 15) != 0;
+        cpu_features.stibp_always_on = ext8.ebx & (1 << 17) != 0;
+        cpu_features.prefer_ibrs = ext8.ebx & (1 << 18) != 0;
+        cpu_features.pp_invlpg = ext8.ebx & (1 << 20) != 0;
+        cpu_features.ssbd_ext = ext8.ebx & (1 << 24) != 0;
     }
 
     bsp_apic_id = cpu_features.apic_id;
@@ -544,6 +718,8 @@ const CR4_OSXSAVE: u64 = 1 << 18; // XSAVE/XRSTOR
 const CR4_SMEP: u64 = 1 << 20; // Supervisor Mode Execution Prevention
 const CR4_SMAP: u64 = 1 << 21; // Supervisor Mode Access Prevention
 const CR4_PKE: u64 = 1 << 22; // Protection Keys Enable
+const CR4_CET: u64 = 1 << 23; // Control-flow Enforcement Technology
+const CR4_PKS: u64 = 1 << 24; // Supervisor Protection Keys
 
 // =============================================================================
 // Security hardening — SMEP, SMAP, UMIP, NX, IBRS/IBPB
@@ -577,6 +753,8 @@ fn security_harden_cpu() void {
     if (cpu_features.umip) cr4 |= CR4_UMIP;
     if (cpu_features.fsgsbase) cr4 |= CR4_FSGSBASE;
     if (cpu_features.pku) cr4 |= CR4_PKE;
+    if (cpu_features.pks) cr4 |= CR4_PKS;
+    if (cpu_features.cet_ss or cpu_features.cet_ibt) cr4 |= CR4_CET;
     if (cpu_features.xsave) cr4 |= CR4_OSXSAVE;
     // Enable PCIDs for efficient TLB management during KPTI
     if (cpu_features.invpcid) cr4 |= CR4_PCIDE;
@@ -612,6 +790,82 @@ fn security_harden_cpu() void {
         const pat_val: u64 = 0x0007010600070106;
         wrmsr(IA32_PAT, pat_val);
     }
+}
+
+fn build_supercomputer_profile() void {
+    const cpus = if (acpi_num_cpus == 0) @as(u32, 1) else acpi_num_cpus;
+    super_profile.recommended_cpus = @min(cpus, KERNEL_MAX_CPUS);
+    super_profile.numa_nodes = @max(@as(u32, 1), (super_profile.recommended_cpus + 63) / 64);
+    super_profile.io_queues = @max(@as(u32, 1), @min(super_profile.recommended_cpus * 4, @as(u32, 1024)));
+
+    super_profile.compute_score = super_profile.recommended_cpus * 8;
+    if (cpu_features.avx2) super_profile.compute_score += 40;
+    if (cpu_features.avx512f) super_profile.compute_score += 80;
+    if (cpu_features.avx512_vnni or cpu_features.avx_vnni) super_profile.compute_score += 60;
+    if (cpu_features.avx10) super_profile.compute_score += 100;
+    if (cpu_features.amx_tile) super_profile.compute_score += 140;
+    if (cpu_features.amx_bf16 or cpu_features.amx_fp16) super_profile.compute_score += 80;
+    if (cpu_features.hybrid or cpu_features.hybrid_edx) super_profile.compute_score += 30;
+
+    super_profile.memory_score = 20;
+    if (cpu_features.page1gb) super_profile.memory_score += 40;
+    if (cpu_features.la57) super_profile.memory_score += 80;
+    if (cpu_features.clwb) super_profile.memory_score += 30;
+    if (cpu_features.cldemote) super_profile.memory_score += 20;
+    if (cpu_features.tme) super_profile.memory_score += 30;
+    if (cpu_features.phys_addr_bits >= 52) super_profile.memory_score += 40;
+
+    super_profile.io_score = 20;
+    if (acpi_has_mcfg) super_profile.io_score += 30;
+    if (cpu_features.movdiri) super_profile.io_score += 20;
+    if (cpu_features.movdir64b) super_profile.io_score += 20;
+    if (cpu_features.fsrm) super_profile.io_score += 20;
+    if (cpu_features.uintr) super_profile.io_score += 30;
+    if (cpu_features.x2apic and config.enable_x2apic) super_profile.io_score += 20;
+
+    super_profile.security_score = 20;
+    if (cpu_features.nx) super_profile.security_score += 20;
+    if (cpu_features.smep) super_profile.security_score += 20;
+    if (cpu_features.smap) super_profile.security_score += 20;
+    if (cpu_features.cet_ss) super_profile.security_score += 25;
+    if (cpu_features.cet_ibt) super_profile.security_score += 25;
+    if (cpu_features.pks) super_profile.security_score += 20;
+    if (cpu_features.fred) super_profile.security_score += 20;
+    if (cpu_features.bhi_ctrl or cpu_features.ipred_ctrl or cpu_features.rrsba_ctrl) super_profile.security_score += 30;
+
+    super_profile.virtualization_score = 10;
+    if (cpu_features.sgx) super_profile.virtualization_score += 20;
+    if (cpu_features.pconfig) super_profile.virtualization_score += 20;
+    if (cpu_features.tme) super_profile.virtualization_score += 30;
+    if (cpu_features.lam) super_profile.virtualization_score += 20;
+
+    super_profile.accelerators = 0;
+    if (cpu_features.aes_ni) super_profile.accelerators += 1;
+    if (cpu_features.sha) super_profile.accelerators += 1;
+    if (cpu_features.vaes) super_profile.accelerators += 1;
+    if (cpu_features.vpclmulqdq) super_profile.accelerators += 1;
+    if (cpu_features.avx512_vnni) super_profile.accelerators += 1;
+    if (cpu_features.amx_tile) super_profile.accelerators += 1;
+
+    super_profile.capability_score = super_profile.compute_score + super_profile.memory_score + super_profile.io_score + super_profile.security_score + super_profile.virtualization_score;
+    super_profile.scheduler_quantum_ns = if (cpu_features.hybrid or cpu_features.hybrid_edx)
+        1_500_000
+    else if (super_profile.recommended_cpus >= 64)
+        2_000_000
+    else
+        3_000_000;
+    super_profile.memory_tier_policy = if (cpu_features.la57 and cpu_features.cldemote)
+        "NUMA+CXL-ready hot/cold tiering"
+    else if (cpu_features.la57)
+        "5-level NUMA hugepage tiering"
+    else
+        "NUMA-aware hugepage tiering";
+    super_profile.security_posture = if (cpu_features.cet_ss and cpu_features.cet_ibt and cpu_features.fred)
+        "CET+FRED hardened"
+    else if (cpu_features.cet_ss or cpu_features.cet_ibt)
+        "CET hardened"
+    else
+        "classic x86_64 hardened";
 }
 
 // =============================================================================
@@ -1204,21 +1458,39 @@ fn serial_puts(s: []const u8) void {
 }
 
 fn serial_putd(val: u32) void {
-    if (val == 0) { serial_putchar('0'); return; }
+    if (val == 0) {
+        serial_putchar('0');
+        return;
+    }
     var buf: [10]u8 = undefined;
     var i: usize = 0;
     var v = val;
-    while (v > 0) : (i += 1) { buf[i] = @truncate(v % 10 + '0'); v /= 10; }
-    while (i > 0) { i -= 1; serial_putchar(buf[i]); }
+    while (v > 0) : (i += 1) {
+        buf[i] = @truncate(v % 10 + '0');
+        v /= 10;
+    }
+    while (i > 0) {
+        i -= 1;
+        serial_putchar(buf[i]);
+    }
 }
 
 fn serial_putd64(val: u64) void {
-    if (val == 0) { serial_putchar('0'); return; }
+    if (val == 0) {
+        serial_putchar('0');
+        return;
+    }
     var buf: [20]u8 = undefined;
     var i: usize = 0;
     var v = val;
-    while (v > 0) : (i += 1) { buf[i] = @truncate(v % 10 + '0'); v /= 10; }
-    while (i > 0) { i -= 1; serial_putchar(buf[i]); }
+    while (v > 0) : (i += 1) {
+        buf[i] = @truncate(v % 10 + '0');
+        v /= 10;
+    }
+    while (i > 0) {
+        i -= 1;
+        serial_putchar(buf[i]);
+    }
 }
 
 fn serial_putx(val: u64) void {
@@ -1251,10 +1523,22 @@ var vga_row: usize = 0;
 var vga_color: u8 = 0x0F;
 
 const VgaColor = enum(u4) {
-    black = 0, blue = 1, green = 2, cyan = 3,
-    red = 4, magenta = 5, brown = 6, light_grey = 7,
-    dark_grey = 8, light_blue = 9, light_green = 10, light_cyan = 11,
-    light_red = 12, light_magenta = 13, yellow = 14, white = 15,
+    black = 0,
+    blue = 1,
+    green = 2,
+    cyan = 3,
+    red = 4,
+    magenta = 5,
+    brown = 6,
+    light_grey = 7,
+    dark_grey = 8,
+    light_blue = 9,
+    light_green = 10,
+    light_cyan = 11,
+    light_red = 12,
+    light_magenta = 13,
+    yellow = 14,
+    white = 15,
 };
 
 fn vga_setcolor(fg: VgaColor, bg: VgaColor) void {
@@ -1280,15 +1564,25 @@ fn vga_scroll() void {
 }
 
 fn vga_putchar(c: u8) void {
-    if (c == '\n') { vga_col = 0; vga_row += 1; }
-    else if (c == '\r') { vga_col = 0; }
-    else if (c == '\t') { vga_col = (vga_col + 8) & ~@as(usize, 7); }
-    else {
+    if (c == '\n') {
+        vga_col = 0;
+        vga_row += 1;
+    } else if (c == '\r') {
+        vga_col = 0;
+    } else if (c == '\t') {
+        vga_col = (vga_col + 8) & ~@as(usize, 7);
+    } else {
         VGA_BUFFER[vga_row * VGA_WIDTH + vga_col] = @as(u16, vga_color) << 8 | c;
         vga_col += 1;
     }
-    if (vga_col >= VGA_WIDTH) { vga_col = 0; vga_row += 1; }
-    if (vga_row >= VGA_HEIGHT) { vga_scroll(); vga_row = VGA_HEIGHT - 1; }
+    if (vga_col >= VGA_WIDTH) {
+        vga_col = 0;
+        vga_row += 1;
+    }
+    if (vga_row >= VGA_HEIGHT) {
+        vga_scroll();
+        vga_row = VGA_HEIGHT - 1;
+    }
 }
 
 fn vga_cursor() void {
@@ -1305,20 +1599,35 @@ fn vga_puts(s: []const u8) void {
 }
 
 fn vga_putd(val: u32) void {
-    if (val == 0) { vga_putchar('0'); return; }
+    if (val == 0) {
+        vga_putchar('0');
+        return;
+    }
     var buf: [10]u8 = undefined;
     var i: usize = 0;
     var v = val;
-    while (v > 0) : (i += 1) { buf[i] = @truncate(v % 10 + '0'); v /= 10; }
-    while (i > 0) { i -= 1; vga_putchar(buf[i]); }
+    while (v > 0) : (i += 1) {
+        buf[i] = @truncate(v % 10 + '0');
+        v /= 10;
+    }
+    while (i > 0) {
+        i -= 1;
+        vga_putchar(buf[i]);
+    }
 }
 
 // =============================================================================
 // Kernel log — dual output (serial + VGA) with boot timestamp
 // =============================================================================
 const LogLevel = enum(u8) {
-    emerg = 0, alert = 1, crit = 2, err = 3,
-    warn = 4, notice = 5, info = 6, debug = 7,
+    emerg = 0,
+    alert = 1,
+    crit = 2,
+    err = 3,
+    warn = 4,
+    notice = 5,
+    info = 6,
+    debug = 7,
 };
 
 var current_log_level: LogLevel = config.log_level_default;
@@ -1390,9 +1699,15 @@ fn klog_fail(what: []const u8) void {
 // =============================================================================
 // CPU control
 // =============================================================================
-inline fn cli() void { asm volatile ("cli"); }
-inline fn sti() void { asm volatile ("sti"); }
-inline fn hlt() void { asm volatile ("hlt"); }
+inline fn cli() void {
+    asm volatile ("cli");
+}
+inline fn sti() void {
+    asm volatile ("sti");
+}
+inline fn hlt() void {
+    asm volatile ("hlt");
+}
 
 fn halt_forever() noreturn {
     cli();
@@ -1436,15 +1751,15 @@ pub fn panic(msg: []const u8, _: ?*std.builtin.StackTrace, _: ?usize) noreturn {
 }
 
 // =============================================================================
-// Kernel entry — Phase 0 through Phase 26
+// Kernel entry — Phase 0 through Phase 27
 // =============================================================================
 export fn kmain() noreturn {
     // ── Phase 1: Serial console ──────────────────────────────────────────
     serial_init();
     serial_puts("\r\n");
     serial_puts("╔══════════════════════════════════════════════════════╗\r\n");
-    serial_puts("║  Zxyphor Kernel v0.0.3 \"Xceon II\" booting...        ║\r\n");
-    serial_puts("║  Architecture: x86_64   Build: 2026-04-02           ║\r\n");
+    serial_puts("║  Zxyphor Kernel v0.0.4 \"Xceon III\" booting...       ║\r\n");
+    serial_puts("║  Architecture: x86_64   Build: 2026-04-28           ║\r\n");
     serial_puts("║  Features: ");
     serial_puts(KERNEL_FEATURES);
     serial_puts("  ║\r\n");
@@ -1453,7 +1768,7 @@ export fn kmain() noreturn {
     // ── Phase 2: VGA text mode ───────────────────────────────────────────
     vga_clear();
     vga_setcolor(.light_cyan, .black);
-    vga_puts("\n  Zxyphor Kernel v0.0.3 \"Xceon II\"");
+    vga_puts("\n  Zxyphor Kernel v0.0.4 \"Xceon III\"");
     vga_setcolor(.dark_grey, .black);
     vga_puts("  [x86_64]\n");
     vga_setcolor(.light_grey, .black);
@@ -1476,7 +1791,10 @@ export fn kmain() noreturn {
     // Print first non-space chars of brand
     var brand_start: usize = 0;
     for (cpu_features.brand_string, 0..) |c, idx| {
-        if (c != ' ' and c != 0) { brand_start = idx; break; }
+        if (c != ' ' and c != 0) {
+            brand_start = idx;
+            break;
+        }
     }
     for (cpu_features.brand_string[brand_start..]) |c| {
         if (c == 0) break;
@@ -1504,13 +1822,25 @@ export fn kmain() noreturn {
     if (cpu_features.rdrand) klog_ok("  RDRAND hardware RNG");
     if (cpu_features.aes_ni) klog_ok("  AES-NI hardware acceleration");
     if (cpu_features.sha) klog_ok("  SHA hardware extensions");
+    if (cpu_features.vaes) klog_ok("  VAES vector crypto acceleration");
+    if (cpu_features.avx512_vnni or cpu_features.avx_vnni) klog_ok("  VNNI AI/inference acceleration");
+    if (cpu_features.amx_tile) klog_ok("  AMX tile matrix acceleration");
+    if (cpu_features.avx10) {
+        klog_val("  AVX10 version: ", cpu_features.avx10_version);
+        klog_val("  AVX10 vector width: ", cpu_features.avx10_vector_bits);
+    }
+    if (cpu_features.cet_ss) klog_ok("  CET shadow stack");
+    if (cpu_features.cet_ibt) klog_ok("  CET indirect branch tracking");
+    if (cpu_features.fred) klog_ok("  FRED event delivery");
+    if (cpu_features.lam) klog_ok("  LAM tagged user pointers");
+    if (cpu_features.tme) klog_ok("  Total Memory Encryption");
     if (cpu_features.hypervisor) klog_ok("  Running under hypervisor");
 
     // ── Phase 4: MSR + security hardening ────────────────────────────────
     security_harden_cpu();
     klog_ok("MSR: EFER configured (NX + SYSCALL/SYSRET)");
-    klog_ok("Security: SMEP/SMAP/UMIP/PAT/PCID enabled");
-    klog_ok("Spectre/Meltdown mitigations active (IBRS+IBPB+SSBD)");
+    klog_ok("Security: SMEP/SMAP/UMIP/PAT/PCID/CET/PKS enabled when present");
+    klog_ok("Spectre/Meltdown/BHI mitigations active (IBRS+IBPB+SSBD)");
     if (!config.enable_tsx) klog_ok("TSX disabled (TAA/MDS mitigation)");
 
     // ── Phase 5-7: CPU tables ────────────────────────────────────────────
@@ -1537,6 +1867,7 @@ export fn kmain() noreturn {
     if (acpi_pm_timer_port != 0) {
         klog_ok("ACPI: PM timer available");
     }
+    build_supercomputer_profile();
 
     // ── Phase 9: APIC ────────────────────────────────────────────────────
     pic_disable();
@@ -1567,8 +1898,12 @@ export fn kmain() noreturn {
     klog_ok("Multiboot2 memory map parsed → e820 normalized");
 
     // ── Phase 12: PMM ────────────────────────────────────────────────────
-    klog_ok("PMM: NUMA-aware buddy allocator (order 0-11, zones: DMA/DMA32/Normal/HighMem)");
+    klog_ok("PMM: NUMA-aware buddy allocator (order 0-11, zones: DMA/DMA32/Normal/HighMem/CXL)");
     klog_ok("  Zone watermarks: min/low/high per NUMA node");
+    klog_ok("  Memory tier policy:");
+    serial_puts("[INFO]    ");
+    serial_puts(super_profile.memory_tier_policy);
+    serial_puts("\r\n");
 
     // ── Phase 13: VMM ────────────────────────────────────────────────────
     if (cpu_features.la57 and config.enable_la57) {
@@ -1581,6 +1916,9 @@ export fn kmain() noreturn {
     if (config.enable_kpti) {
         klog_ok("  KPTI: Shadow page tables for user/kernel isolation");
     }
+    if (cpu_features.pks) {
+        klog_ok("  PKS: supervisor protection keys for kernel mappings");
+    }
 
     // ── Phase 14: KASLR ──────────────────────────────────────────────────
     if (config.enable_kaslr) {
@@ -1592,6 +1930,7 @@ export fn kmain() noreturn {
     klog_ok("  Caches: 8B/16B/32B/64B/128B/256B/512B/1K/2K/4K/8K");
     klog_ok("  Random freelist (SLAB_FREELIST_RANDOM)");
     klog_ok("  Hardened: red-zone, sanity checks, quarantine");
+    klog_val("  I/O queue budget: ", super_profile.io_queues);
 
     // ── Phase 16: RCU ────────────────────────────────────────────────────
     klog_ok("RCU: Tree-hierarchical RCU initialized");
@@ -1627,6 +1966,7 @@ export fn kmain() noreturn {
     klog_ok("AHCI/SATA controller (FIS-based switching, NCQ)");
     klog_ok("virtio-blk: modern MMIO driver (multi-queue)");
     klog_ok("Block layer: mq-deadline I/O scheduler");
+    klog_val("  NVMe/blk-mq queue target: ", super_profile.io_queues);
 
     // ── Phase 21: Filesystems ────────────────────────────────────────────
     klog_ok("VFS: dentry cache + inode cache + mount tree");
@@ -1659,12 +1999,17 @@ export fn kmain() noreturn {
     klog_ok("  Credentials: uid/gid/euid/egid/suid/sgid/fsuid/fsgid");
     klog_ok("  memfd_secret: process-private unmappable memory");
     klog_ok("  Stack canary + guard pages on kernel stacks");
+    klog_ok("  Security posture:");
+    serial_puts("[INFO]    ");
+    serial_puts(super_profile.security_posture);
+    serial_puts("\r\n");
 
     // ── Phase 25: Scheduler ──────────────────────────────────────────────
     klog_ok("EEVDF scheduler: Earliest Eligible Virtual Deadline First");
     klog_ok("  Per-CPU lockless runqueues with work-stealing");
     klog_ok("  Load balancing: push/pull migration, NUMA domains");
     klog_ok("  Energy-Aware Scheduling (EAS): big.LITTLE/P+E core");
+    klog_val64("  Adaptive quantum: ", super_profile.scheduler_quantum_ns / 1000, " µs");
     klog_ok("  Preemption model: voluntary (PREEMPT_VOLUNTARY)");
     klog_ok("  RT class: SCHED_FIFO/SCHED_RR with bandwidth throttle");
     klog_ok("  DL class: SCHED_DEADLINE (CBS + EDF)");
@@ -1678,7 +2023,18 @@ export fn kmain() noreturn {
     klog_ok("ftrace: function tracer + event trace infrastructure");
     klog_ok("perf_events: hardware PMC + software counters");
 
-    // ── Phase 26: Processes ──────────────────────────────────────────────
+    // ── Phase 26: Supercomputer profile ──────────────────────────────────
+    klog_val("Super profile capability score: ", super_profile.capability_score);
+    klog_val("  Compute score: ", super_profile.compute_score);
+    klog_val("  Memory score: ", super_profile.memory_score);
+    klog_val("  I/O score: ", super_profile.io_score);
+    klog_val("  Security score: ", super_profile.security_score);
+    klog_val("  Virtualization score: ", super_profile.virtualization_score);
+    klog_val("  Hardware accelerators: ", super_profile.accelerators);
+    klog_val("  Recommended CPU lanes: ", super_profile.recommended_cpus);
+    klog_val("  NUMA/CXL tiers: ", super_profile.numa_nodes);
+
+    // ── Phase 27: Processes ──────────────────────────────────────────────
     klog_ok("Created: PID 0 (idle — SCHED_IDLE, HLT loop)");
     klog_ok("Created: PID 1 (init — SCHED_NORMAL, bootstrap)");
     klog_ok("Created: PID 2 (kthreadd — kernel thread factory)");
@@ -1687,7 +2043,7 @@ export fn kmain() noreturn {
     vga_puts("\n");
     vga_setcolor(.light_green, .black);
     vga_puts("  ╔══════════════════════════════════════════════════╗\n");
-    vga_puts("  ║   Zxyphor v0.0.3 \"Xceon II\" — All systems GO    ║\n");
+    vga_puts("  ║  Zxyphor v0.0.4 \"Xceon III\" — Super profile ON   ║\n");
     vga_puts("  ╠══════════════════════════════════════════════════╣\n");
 
     vga_setcolor(.light_cyan, .black);
@@ -1711,12 +2067,23 @@ export fn kmain() noreturn {
     while (pad < 12) : (pad += 1) vga_putchar(' ');
     vga_puts("║\n");
 
+    vga_setcolor(.light_cyan, .black);
+    vga_puts("  ║  Score: ");
+    vga_putd(super_profile.capability_score);
+    vga_puts("  Accel: ");
+    vga_putd(super_profile.accelerators);
+    vga_puts("  Queues: ");
+    vga_putd(super_profile.io_queues);
+    pad = 0;
+    while (pad < 8) : (pad += 1) vga_putchar(' ');
+    vga_puts("║\n");
+
     vga_setcolor(.light_green, .black);
     vga_puts("  ╚══════════════════════════════════════════════════╝\n\n");
     vga_setcolor(.white, .black);
 
     serial_puts("\r\n[INFO]  ═══════════════════════════════════════════\r\n");
-    serial_puts("[INFO]   Kernel initialization complete.\r\n");
+    serial_puts("[INFO]   Kernel initialization complete — supercomputer profile active.\r\n");
     serial_puts("[INFO]   ");
     serial_putd(acpi_num_cpus);
     serial_puts(" CPUs, TSC ");
@@ -1726,7 +2093,9 @@ export fn kmain() noreturn {
     serial_puts(" ticks/ms\r\n");
     serial_puts("[INFO]   ");
     serial_putd(pci_count);
-    serial_puts(" PCI devices, EEVDF scheduler\r\n");
+    serial_puts(" PCI devices, EEVDF scheduler, score ");
+    serial_putd(super_profile.capability_score);
+    serial_puts("\r\n");
     serial_puts("[INFO]   Entering scheduler idle loop.\r\n");
     serial_puts("[INFO]  ═══════════════════════════════════════════\r\n");
 
