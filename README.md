@@ -1,6 +1,6 @@
 # Zxyphor Kernel
 
-**Codename: Xceon**| A modern, x86_64 operating system kernel written in Zig and Rust.
+**Codename: Xceon** | A modern, x86_64 operating system kernel written in Zig and Rust.
 
 ```
  ███████╗██╗  ██╗██╗   ██╗██████╗ ██╗  ██╗ ██████╗ ██████╗
@@ -401,8 +401,6 @@ Virtual Address Space (Higher Half):
 
 ## License
 
-Copyright (c) 2025 Zxyphor Project. All rights reserved.
+Copyright (c) 2026 Zxyphor Project. All rights reserved.
 
 ---
-
-*Zxyphor Genesis — Built from the ground up, one instruction at a time.*
